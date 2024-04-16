@@ -9,6 +9,6 @@
 #define HOLOG_VER_TWEAK "0"
 
 #define HOLOG_DESC "HoLog"
-#define HOLOG_HOMEPAGE_URL "https://github.com/Hotakus/hhtl"
+#define HOLOG_HOMEPAGE_URL "https://github.com/Hotakus/holog"
 
 #endif // INCLUDE_GUARD

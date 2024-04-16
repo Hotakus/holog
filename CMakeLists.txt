@@ -3,7 +3,7 @@ project(holog
         LANGUAGES C
         VERSION 1.0.0.0
         DESCRIPTION "HoLog"
-        HOMEPAGE_URL https://github.com/Hotakus/hhtl
+        HOMEPAGE_URL https://github.com/Hotakus/holog
 )
 set(CMAKE_C_STANDARD 99)
 
