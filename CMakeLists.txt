@@ -46,7 +46,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin) # 可执行文件
 
 # main add
 add_definitions(-DDUMMY_DEFINE)
-add_compile_options(-fdata-sections -ffunction-sections -Wall)
+add_compile_options(-fdata-sections -ffunction-sections -Wall -O2)
 add_link_options(-Wl,-Map=object.map,--cref,--gc-section)
 
 include_directories(./inc ./)

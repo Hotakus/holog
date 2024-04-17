@@ -20,6 +20,7 @@ static holog_device_t *holog_dev_create(const char *name, holog_level_t level, h
 static holog_res_t holog_dev_destroy(holog_device_t *dev);
 
 static holog_res_t holog_register_device(holog_device_t *dev);
+homsg_res_t unregister_device(holog_device_t *dev);
 
 static holog_res_t holog_printf(holog_level_t level, const char *fmt, ...);
 
@@ -34,6 +35,7 @@ static holog_t instance = {
         .create = holog_dev_create,
         .destroy = holog_dev_destroy,
         .register_device = holog_register_device,
+        .unregister_device = unregister_device,
         .printf = holog_printf,
         .set_level = holog_set_level,
         .set_opr_handle = holog_set_opr_handle,

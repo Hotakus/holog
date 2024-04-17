@@ -1,3 +1,4 @@
 [submodule "src/homsg_psp"]
 	path = src/homsg_psp
+	branch = holog-adapt
 	url = git@github.com:Hotakus/homsg_psp.git

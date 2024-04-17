@@ -48,12 +48,6 @@ typedef struct holog_device_t {
     holog_device_opr_t *opr;
 } holog_device_t;
 
-typedef struct holog_msg_t holog_msg_t;
-typedef struct holog_msg_t {
-    holog_device_t *dev;
-    const char *text;
-} holog_msg_t;
-
 typedef struct holog_t holog_t;
 typedef struct holog_t {
     homsg_psp_t *psp;
