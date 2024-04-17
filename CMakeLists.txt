@@ -48,13 +48,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin) # 可执行文件
 add_definitions(-DDUMMY_DEFINE)
 add_compile_options(-fdata-sections -ffunction-sections -Wall)
 add_link_options(-Wl,-Map=object.map,--cref,--gc-section)
+
 include_directories(./inc ./)
+include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
 
 #file(GLOB_RECURSE SOURCES "./*.c" "./*.h")
 #add_subdirectory(./eg)
+add_subdirectory(./src/homsg_psp)
 
 #message(WARNING     "${LINK_FLAGS}")
 #message(WARNING     "${CMAKE_C_FLAGS}")
 
-add_executable(holog holog.c)
+add_executable(holog ./src/holog.c)
+target_link_libraries(holog homsg_psp)
 #target_link_libraries(holog eg)

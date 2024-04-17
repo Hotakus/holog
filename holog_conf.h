@@ -10,6 +10,7 @@
 #ifndef HOLOG_HOLOG_CONF_H
 #define HOLOG_HOLOG_CONF_H
 
+#define HOLOG_PRINTF_MAX_SIZE (256)
 
 #ifdef __cplusplus
 extern "C" {
