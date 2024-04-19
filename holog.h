@@ -86,7 +86,7 @@ typedef struct holog_t {
         holog_res_t (*register_device)(holog_device_t *dev);
         holog_res_t (*unregister_device)(holog_device_t *dev);
 
-        holog_res_t (*printf)(holog_level_t level, char *file_name, char* file_path, int line, const char *fmt, ...);
+        holog_res_t (*printf)(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...);
 
         void (*set_level)(holog_device_t *dev, holog_level_t level);
 

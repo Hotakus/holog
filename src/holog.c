@@ -25,7 +25,7 @@ static holog_res_t holog_dev_destroy(holog_device_t *dev);
 static holog_res_t holog_register_device(holog_device_t *dev);
 static holog_res_t unregister_device(holog_device_t *dev);
 
-static holog_res_t holog_printf(holog_level_t level, char *file_name, char *file_path, int line, const char *fmt, ...);
+static holog_res_t holog_printf(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...);
 
 static void holog_set_level(holog_device_t *dev, holog_level_t level);
 
@@ -234,7 +234,7 @@ holog_res_t unregister_device(holog_device_t *dev) {
 }
 
 
-holog_res_t holog_printf(holog_level_t level, char *file_name, char *file_path, int line, const char *fmt, ...) {
+holog_res_t holog_printf(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...) {
     va_list args;
     char style_buf[HOLOG_PRINTF_MAX_SIZE]; // 格式化后的字符串最大长度
 
