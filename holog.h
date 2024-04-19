@@ -22,6 +22,12 @@ typedef enum holog_res_t {
     HOLOG_RES_OK = 0,
     HOLOG_RES_ERROR,
     HOLOG_RES_NO_INIT,
+    HOLOG_RES_INVALID_PARAMS,
+
+    HOLOG_RES_FILE_OPEN_ERROR,
+    HOLOG_RES_FILE_WRITE_ERROR,
+    HOLOG_RES_FILE_READ_ERROR,
+    HOLOG_RES_FILE_SEEK_ERROR,
 } holog_res_t;
 
 typedef enum holog_level_t {
@@ -35,36 +41,53 @@ typedef enum holog_level_t {
     HOLOG_LEVEL_END,               // (0x21) End
 } holog_level_t;
 
-typedef struct holog_device_opr_t holog_device_opr_t;
-typedef struct holog_device_opr_t {
-    size_t (*timestamp)();
-    homsg_subscriber_update_callback_t transmit_callback;
-} holog_device_opr_t;
+typedef enum holog_device_type_t holog_device_type_t;
+typedef enum holog_device_type_t {
+    HOLOG_DEVICE_TYPE_STDOUT,
+    HOLOG_DEVICE_TYPE_COMMON_FILE,
+    HOLOG_DEVICE_TYPE_FATFS,
+    HOLOG_DEVICE_TYPE_LITTLE_FS,
+    HOLOG_DEVICE_TYPE_END
+} holog_device_type_t;
+
+typedef struct holog_msg_t holog_msg_t;
+typedef struct holog_msg_t {
+    const char *text;
+    const char *path;
+} holog_msg_t;
 
 typedef struct holog_device_t holog_device_t;
 typedef struct holog_device_t {
     const char *name;
-    uint8_t level;  // default: HOLOG_INFO_TYPE_STDOUT. HOLOG_INFO_TYPE_INFO | HOLOG_INFO_TYPE_WARNING = 0x05
-    holog_device_opr_t *opr;
+
+    holog_device_type_t type;
+    const char *log_path;
+
+    uint8_t level;
 } holog_device_t;
 
 typedef struct holog_t holog_t;
 typedef struct holog_t {
     homsg_psp_t *psp;
+    chain_t *devices;
 
     struct {
-        holog_device_t *(*create)(const char *name, holog_level_t level, holog_device_opr_t *opr);
+        holog_device_t *(*create)(const char *name, holog_device_type_t type, holog_level_t level);
         holog_res_t (*destroy)(holog_device_t *dev);
+
         holog_res_t (*register_device)(holog_device_t *dev);
-        homsg_res_t (*unregister_device)(holog_device_t *dev);
+        holog_res_t (*unregister_device)(holog_device_t *dev);
 
         holog_res_t (*printf)(holog_level_t level, const char *fmt, ...);
 
         void (*set_level)(holog_device_t *dev, holog_level_t level);
-        void (*set_opr_handle)(holog_device_t *dev, holog_device_opr_t *opr);
 
         void (*enable_level)(holog_device_t *dev, holog_level_t level);
         void (*disable_level)(holog_device_t *dev, holog_level_t level);
+        void (*mute)(holog_device_t *dev);
+
+        // only for file device
+        void (*set_log_path)(holog_device_t *dev, const char *log_path);
     };
 } holog_t;
 
