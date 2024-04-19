@@ -50,8 +50,16 @@ typedef enum holog_device_type_t {
     HOLOG_DEVICE_TYPE_END
 } holog_device_type_t;
 
+typedef struct holog_style_t {
+    const char *A;
+    const char *B;
+    const char *C;
+    const char *D;
+} holog_style_t;
+
 typedef struct holog_msg_t holog_msg_t;
 typedef struct holog_msg_t {
+    holog_style_t style;
     const char *text;
     const char *path;
 } holog_msg_t;
@@ -78,7 +86,7 @@ typedef struct holog_t {
         holog_res_t (*register_device)(holog_device_t *dev);
         holog_res_t (*unregister_device)(holog_device_t *dev);
 
-        holog_res_t (*printf)(holog_level_t level, const char *fmt, ...);
+        holog_res_t (*printf)(holog_level_t level, char *file_name, char* file_path, int line, const char *fmt, ...);
 
         void (*set_level)(holog_device_t *dev, holog_level_t level);
 
@@ -94,6 +102,16 @@ typedef struct holog_t {
 holog_t *holog();
 holog_res_t holog_init();
 holog_res_t holog_deinit();
+
+
+#define holog_debug(fmt, ...)   holog()->printf(HOLOG_LEVEL_DEBUG, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+#define holog_trace(fmt, ...)   holog()->printf(HOLOG_LEVEL_TRACE, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+#define holog_info(fmt, ...)    holog()->printf(HOLOG_LEVEL_INFO, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+#define holog_error(fmt, ...)   holog()->printf(HOLOG_LEVEL_ERROR, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+#define holog_warning(fmt, ...) holog()->printf(HOLOG_LEVEL_WARNING, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+#define holog_fatal(fmt, ...)   holog()->printf(HOLOG_LEVEL_FATAL, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
+
+
 
 #ifdef __cplusplus
 }

@@ -13,11 +13,11 @@
 #include "holog_conf.h"
 #include <stdarg.h>
 #include <string.h>
-#include <fcntl.h>  // POSIX系统下的文件操作函数
-#include <unistd.h>
 
-//
+
+#define HOLOG_BANNER "[Recorded by HoLog]"
 const char *log_string[] = {"INFO", "ERROR", "WARNING", "FATAL", "DEBUG", "TRACE"};
+const uint8_t style_list[] = HOLOG_LOG_STYLE_LIST;
 
 static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level);
 static holog_res_t holog_dev_destroy(holog_device_t *dev);
@@ -25,7 +25,7 @@ static holog_res_t holog_dev_destroy(holog_device_t *dev);
 static holog_res_t holog_register_device(holog_device_t *dev);
 static holog_res_t unregister_device(holog_device_t *dev);
 
-static holog_res_t holog_printf(holog_level_t level, const char *fmt, ...);
+static holog_res_t holog_printf(holog_level_t level, char *file_name, char *file_path, int line, const char *fmt, ...);
 
 static void holog_set_level(holog_device_t *dev, holog_level_t level);
 
@@ -41,7 +41,6 @@ static void holog_common_file_callback(void *params);
 static void holog_fatfs_callback(void *params);
 static void holog_littlefs_callback(void *params);
 
-#define HOLOG_BANNER "[Recorded by HoLog]"
 
 static holog_t instance = {
         .psp = NULL,
@@ -93,6 +92,13 @@ holog_res_t holog_deinit() {
     return HOLOG_RES_OK;
 }
 
+/**
+ * @brief
+ * @param name
+ * @param type
+ * @param level
+ * @return
+ */
 holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level) {
     holog_device_t *dev = malloc(sizeof(holog_device_t));
 
@@ -106,11 +112,21 @@ holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, hol
     return dev;
 }
 
+/**
+ * @brief
+ * @param dev
+ * @return
+ */
 holog_res_t holog_dev_destroy(holog_device_t *dev) {
     free(dev);
     return HOLOG_RES_OK;
 }
 
+/**
+ * @brief
+ * @param dev
+ * @return
+ */
 holog_res_t holog_register_device(holog_device_t *dev) {
     if (dev == NULL) {
         return HOLOG_RES_ERROR;
@@ -176,6 +192,11 @@ holog_res_t holog_register_device(holog_device_t *dev) {
     return HOLOG_RES_OK;
 }
 
+/**
+ * @brief
+ * @param dev
+ * @return
+ */
 holog_res_t unregister_device(holog_device_t *dev) {
     if (dev == NULL) {
         return HOLOG_RES_ERROR;
@@ -212,13 +233,14 @@ holog_res_t unregister_device(holog_device_t *dev) {
     return HOLOG_RES_OK;
 }
 
-holog_res_t holog_printf(holog_level_t level, const char *fmt, ...) {
+
+holog_res_t holog_printf(holog_level_t level, char *file_name, char *file_path, int line, const char *fmt, ...) {
     va_list args;
-    char buffer[HOLOG_PRINTF_MAX_SIZE]; // 格式化后的字符串最大长度
+    char style_buf[HOLOG_PRINTF_MAX_SIZE]; // 格式化后的字符串最大长度
 
     // 格式化可变参数列表
     va_start(args, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    vsnprintf(style_buf, sizeof(style_buf), fmt, args);
     va_end(args);
 
     // 通知相应的消息主题
@@ -253,7 +275,49 @@ holog_res_t holog_printf(holog_level_t level, const char *fmt, ...) {
                 }
 
                 holog_msg_t msg;
-                msg.text = (char *)buffer;
+                const char **style_p = ((const char **)(&msg.style.A));
+                uint16_t date_pos = sizeof(style_buf) / 2 + 0;
+                uint16_t time_pos = sizeof(style_buf) / 2 + 16;
+                uint16_t path_pos = sizeof(style_buf) / 2 + 32;
+
+                time_t timestamp = HOLOG_GET_TIMESTAMP();
+                struct tm *tm = localtime(&timestamp);
+
+                for (int j = 0; j < sizeof(style_list); ++j) {
+                    switch (style_list[j]) {
+                        case HOLOG_STYLE_TIME : {
+                            strftime(&style_buf[time_pos], 16, "%H:%M:%S", tm);
+                            style_p[j] = &style_buf[time_pos];
+                            break;
+                        }
+                        case HOLOG_STYLE_DATE : {
+                            strftime(&style_buf[date_pos], 16, "%Y-%m-%d", tm);
+                            style_p[j] = &style_buf[date_pos];
+                            break;
+                        }
+                        case HOLOG_STYLE_TYPE : {
+                            style_p[j] = log_string[k];
+                            break;
+                        }
+                        case HOLOG_STYLE_MAIN_CONTENT : {
+                            style_p[j] = &style_buf[0];
+                            break;
+                        }
+                        case HOLOG_STYLE_FILE_NAME : {
+                            sprintf(&style_buf[path_pos], "%s:%d:", file_name, line);
+                            style_p[j] = &style_buf[path_pos];
+                            break;
+                        }
+                        case HOLOG_STYLE_FILE_PATH : {
+                            sprintf(&style_buf[path_pos], "%s:%d:", file_path, line);
+                            style_p[j] = &style_buf[path_pos];
+                            break;
+                        }
+                    }
+                }
+
+
+//                msg.text = (char *)buffer;
                 msg.path = dev->log_path;
 
                 homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
@@ -267,10 +331,20 @@ holog_res_t holog_printf(holog_level_t level, const char *fmt, ...) {
     return HOLOG_RES_OK;
 }
 
+/**
+ * @brief
+ * @param dev
+ * @param level
+ */
 void holog_set_level(holog_device_t *dev, holog_level_t level) {
     dev->level = level;
 }
 
+/**
+ * @brief
+ * @param dev
+ * @param level
+ */
 void enable_level(holog_device_t *dev, holog_level_t level) {
     if (dev == NULL) {
         return;
@@ -306,81 +380,57 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 
 void holog_stdout_callback(void *params) {
     holog_msg_t *msg = (holog_msg_t *)params;
-    printf("msg->text: %s", msg->text);
-    printf("msg->path: %s", msg->path);
+    printf("%s %s %s %s %s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+//    printf("%s%s", msg->text, HOLOG_LINEFEED);
 }
 
 void holog_common_file_callback(void *params) {
     holog_msg_t *msg = (holog_msg_t *)params;
-    printf("common file msg->text: %s", msg->text);
 
-    int fd = open(msg->path, O_CREAT | O_RDWR);
-    if (fd < 0) {
-        printf("open %s failed\n", msg->path);
+#if (HOLOG_COMMON_FILE_ENABLED == 1)
+    FILE *fp = fopen(msg->path, "a+");
+    if (fp == NULL) {
         return;
     }
 
-
-    // 将文件指针移动到文件末尾
-    if (lseek(fd, 0, SEEK_END) == -1) {
-        printf("lseek %s failed 1\n", msg->path);
-        close(fd);
-        return;
+    // judge empty
+    fseek(fp, 0, SEEK_END);
+    if (ftell(fp) == 0) {
+        fprintf(fp, "%s\n", HOLOG_BANNER);
     } else {
-        if (tell(fd) == 0) {
-            write(fd, HOLOG_BANNER"\n", sizeof(HOLOG_BANNER));
-        } else {
-            // 检查文件的最后一个字符是否是换行符
-            char last_char;
-            if (lseek(fd, -1, SEEK_END) == -1) {
-                printf("lseek %s failed 2\n", msg->path);
-                close(fd);
-                return;
-            }
-            if (read(fd, &last_char, 1) == -1) {
-                printf("read %s failed\n", msg->path);
-                close(fd);
-                return;
-            }
-
-            // 如果最后一个字符不是换行符，则在写入内容之前添加一个换行符
-            if (last_char != '\n') {
-                if (write(fd, "\n", 1) == -1) {
-                    printf("write %s failed 1\n", msg->path);
-                    close(fd);
-                    return;
-                }
-            }
+        // judge last char
+        fseek(fp, -1, SEEK_END);
+        if (fgetc(fp) != '\n') {
+            fprintf(fp, "%s", HOLOG_LINEFEED);
         }
     }
 
-    // 写入内容
-    lseek(fd, 0, SEEK_END);
-    if (write(fd, msg->text, strlen(msg->text)) == -1) {
-        printf("write %s failed 2\n", msg->path);
-        close(fd);
-        return;
-    }
+    fseek(fp, 0, SEEK_END);
+    fprintf(fp, "%s%s", msg->text, HOLOG_LINEFEED);
 
-    close(fd);
+    fclose(fp);
+#endif
 }
 
+// todo)):
 void holog_fatfs_callback(void *params) {
+#if (HOLOG_FATFS_ENABLED == 1)
 
+#endif
 }
 
 void holog_littlefs_callback(void *params) {
+#if (HOLOG_LITTLEFS_ENABLED == 1)
 
+#endif
 }
 
-int main() {
-    holog_init();
-
-    holog_device_t *dev = holog()->create("test_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_INFO | HOLOG_LEVEL_WARNING);
-    holog()->set_log_path(dev, "./test.log");
-    holog()->register_device(dev);
-
-    holog()->printf(HOLOG_LEVEL_INFO, "test( %s , %s , %d , %s )", __DATE__, __FILE_NAME__, __LINE__, __FUNCTION__);
-
-    return 0;
-}
+// [22:35:01][DEBUG][holog.c:355] test info
+//int main() {
+//
+//
+//
+////    printf("%s\n", buf);
+//
+//    return 0;
+//}
