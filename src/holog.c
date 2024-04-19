@@ -25,7 +25,7 @@ static holog_res_t holog_dev_destroy(holog_device_t *dev);
 static holog_res_t holog_register_device(holog_device_t *dev);
 static holog_res_t unregister_device(holog_device_t *dev);
 
-static holog_res_t holog_printf(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...);
+static holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, int line, const char *fmt, ...);
 
 static void holog_set_level(holog_device_t *dev, holog_level_t level);
 
@@ -234,7 +234,7 @@ holog_res_t unregister_device(holog_device_t *dev) {
 }
 
 
-holog_res_t holog_printf(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...) {
+holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, int line, const char *fmt, ...) {
     va_list args;
     char style_buf[HOLOG_PRINTF_MAX_SIZE]; // 格式化后的字符串最大长度
 
@@ -316,8 +316,6 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char * file_name,
                     }
                 }
 
-
-//                msg.text = (char *)buffer;
                 msg.path = dev->log_path;
 
                 homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
@@ -381,7 +379,6 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 void holog_stdout_callback(void *params) {
     holog_msg_t *msg = (holog_msg_t *)params;
     printf("%s %s %s %s %s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
-//    printf("%s%s", msg->text, HOLOG_LINEFEED);
 }
 
 void holog_common_file_callback(void *params) {
@@ -406,13 +403,12 @@ void holog_common_file_callback(void *params) {
     }
 
     fseek(fp, 0, SEEK_END);
-    fprintf(fp, "%s%s", msg->text, HOLOG_LINEFEED);
+    fprintf(fp, "%s %s %s %s %s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
 
     fclose(fp);
 #endif
 }
 
-// todo)):
 void holog_fatfs_callback(void *params) {
 #if (HOLOG_FATFS_ENABLED == 1)
 
@@ -424,13 +420,3 @@ void holog_littlefs_callback(void *params) {
 
 #endif
 }
-
-// [22:35:01][DEBUG][holog.c:355] test info
-//int main() {
-//
-//
-//
-////    printf("%s\n", buf);
-//
-//    return 0;
-//}

@@ -27,17 +27,6 @@
 
 #define HOLOG_GET_TIMESTAMP()       (time(NULL))
 
-
-// define log style
-//#define HOLOG_STYLE_TYPE                (0u)
-//#define HOLOG_STYLE_TIME                (1u)
-//#define HOLOG_STYLE_DATE                (2u)
-//#define HOLOG_STYLE_FILE_NAME           (3u)
-//#define HOLOG_STYLE_FILE_PATH           (4u)
-//#define HOLOG_STYLE_FILE_RELATIVE_PATH  (5u)
-//#define HOLOG_STYLE_FILE_ROW_COLUMN     (6u)
-//#define HOLOG_STYLE_MAIN_CONTENT        (7u)
-
 typedef enum holog_style_define_t {
     HOLOG_STYLE_TYPE,
     HOLOG_STYLE_TIME,
