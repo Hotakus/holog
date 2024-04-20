@@ -113,7 +113,7 @@ holog_res_t holog_deinit() {
  * @param level
  * @return
  */
-holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level , bool use_color) {
+holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, bool use_color) {
     holog_device_t *dev = malloc(sizeof(holog_device_t));
 
     dev->name = name;
@@ -428,8 +428,10 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 
 
 void holog_stdout_callback(void *params) {
+#if (HOLOG_STDOUT_ENABLED == 1)
     holog_msg_t *msg = (holog_msg_t *)params;
     printf("%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+#endif
 }
 
 void holog_common_file_callback(void *params) {
@@ -454,8 +456,7 @@ void holog_common_file_callback(void *params) {
     }
 
     fseek(fp, 0, SEEK_END);
-    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s",
-            msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
 
     fclose(fp);
 #endif
@@ -464,18 +465,21 @@ void holog_common_file_callback(void *params) {
 void holog_fatfs_callback(void *params) {
 #if (HOLOG_FATFS_ENABLED == 1)
     holog_msg_t *msg = (holog_msg_t *)params;
-
     FIL fil;
-    FRESULT res = f_open(&fil, msg->path, FA_WRITE | FA_OPEN_APPEND | FA_CREATE_ALWAYS);
+    FILINFO fno;
+
+    f_stat(msg->path, &fno);
+
+    FRESULT res = f_open(&fil, msg->path, FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
     if (res != FR_OK) {
         return;
     }
 
-    if (f_size(&fil) == 0) {
+    if (fno.fsize == 0) {
         f_printf(&fil, "%s\n", HOLOG_BANNER);
     }
 
-    f_lseek(&fil, f_size(&fil));
+    f_lseek(&fil, fno.fsize);
     f_printf(&fil, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
 
     f_close(&fil);
