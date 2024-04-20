@@ -10,14 +10,7 @@ set(CMAKE_C_STANDARD 99)
 # 指定版本号的配置文件
 configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${PROJECT_SOURCE_DIR}/version.h)
 
-# specify cross-compilers and tools
-#set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-#set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-#set(CMAKE_ASM_COMPILER  arm-none-eabi-gcc)
-#set(CMAKE_AR arm-none-eabi-ar)
-#set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-#set(CMAKE_OBJDUMP arm-none-eabi-objdump)
-#set(SIZE arm-none-eabi-size)
+SET(CMAKE_C_COMPILER /root/dl/arm-none-eabi/arm-none-eabi/bin/arm-none-eabi-gcc)
 
 # 系统设置
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
