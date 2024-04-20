@@ -33,7 +33,7 @@ static holog_log_string_t log_string_list[] = {
 
 static const uint8_t style_list[] = HOLOG_LOG_STYLE_LIST;
 
-static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, bool use_color);
+static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, const char *linefeed);
 static holog_res_t holog_dev_destroy(holog_device_t *dev);
 
 static holog_res_t holog_register_device(holog_device_t *dev);
@@ -113,14 +113,14 @@ holog_res_t holog_deinit() {
  * @param level
  * @return
  */
-holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, bool use_color) {
+holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, const char *linefeed) {
     holog_device_t *dev = malloc(sizeof(holog_device_t));
 
     dev->name = name;
     dev->type = type;
     dev->log_path = NULL;
     dev->level = level;
-    dev->use_color = use_color;
+    dev->linefeed = linefeed;
 
     return dev;
 }
@@ -306,7 +306,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 time_t timestamp = HOLOG_GET_TIMESTAMP();
                 struct tm *tm = localtime(&timestamp);
 
-                // memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
+                memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
                 for (int j = 0; j < sizeof(style_list); ++j) {
                     switch (style_list[j]) {
                         case HOLOG_STYLE_TIME : {
@@ -367,6 +367,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 }
 
                 msg.path = dev->log_path;
+                msg.linefeed = dev->linefeed;
 
                 homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
                 update(&msg);    // Run callback
@@ -430,7 +431,7 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 void holog_stdout_callback(void *params) {
 #if (HOLOG_STDOUT_ENABLED == 1)
     holog_msg_t *msg = (holog_msg_t *)params;
-    printf("%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    printf("%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 #endif
 }
 
@@ -456,7 +457,7 @@ void holog_common_file_callback(void *params) {
     }
 
     fseek(fp, 0, SEEK_END);
-    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 
     fclose(fp);
 #endif
@@ -480,7 +481,7 @@ void holog_fatfs_callback(void *params) {
     }
 
     f_lseek(&fil, fno.fsize);
-    f_printf(&fil, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    f_printf(&fil, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 
     f_close(&fil);
 #endif

@@ -37,11 +37,11 @@ int main() {
     // you can create log devices very easily, and flexibly
     // Log devices can be set to different log levels very flexibly, if you don't set the log level, it will ignore corresponding level logs.
 //    // Also support embedded filesystem for embedded system
-    holog_device_t *stdout_dev = holog()->create("stdout_dev", HOLOG_DEVICE_TYPE_STDOUT, HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_INFO, true);
-    holog_device_t *info_dev = holog()->create("info_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_INFO, false);
-    holog_device_t *warning_dev = holog()->create("warning_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_WARNING, false);
-    holog_device_t *error_dev = holog()->create("error_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR, false);
-    holog_device_t *mix_dev = holog()->create("mix_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_INFO, false);
+    holog_device_t *stdout_dev = holog()->create("stdout_dev", HOLOG_DEVICE_TYPE_STDOUT, HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_INFO, HOLOG_LINEFEED_CRLF);
+    holog_device_t *info_dev = holog()->create("info_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_INFO, HOLOG_LINEFEED_LF);
+    holog_device_t *warning_dev = holog()->create("warning_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_WARNING, HOLOG_LINEFEED_LF);
+    holog_device_t *error_dev = holog()->create("error_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR, HOLOG_LINEFEED_LF);
+    holog_device_t *mix_dev = holog()->create("mix_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_INFO, HOLOG_LINEFEED_LF);
 
     // Set log path
     holog()->set_log_path(stdout_dev, NULL);    // stdout don't need log path, set to NULL

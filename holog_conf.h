@@ -12,9 +12,11 @@
 
 #define HOLOG_BANNER "[Recorded by HoLog]"
 
+#define HOLOG_LINEFEED_CRLF  "\r\n"
+#define HOLOG_LINEFEED_LF    "\n"
+
 // the size is for log buffer, min is 256
 #define HOLOG_PRINTF_MAX_SIZE       (256)
-#define HOLOG_LINEFEED              "\n"
 
 // enable or disable
 #define HOLOG_STDOUT_ENABLED        (1)

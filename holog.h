@@ -63,17 +63,18 @@ typedef struct holog_msg_t {
     holog_style_t style;
     const char *text;
     const char *path;
+    const char *linefeed;
 } holog_msg_t;
 
 typedef struct holog_device_t holog_device_t;
 typedef struct holog_device_t {
     const char *name;
+    const char *linefeed;
 
     holog_device_type_t type;
     const char *log_path;
 
     uint8_t level;
-    bool use_color;
 } holog_device_t;
 
 typedef struct holog_t holog_t;
@@ -82,13 +83,13 @@ typedef struct holog_t {
     chain_t *devices;
 
     struct {
-        holog_device_t *(*create)(const char *name, holog_device_type_t type, holog_level_t level, bool use_color);
+        holog_device_t *(*create)(const char *name, holog_device_type_t type, holog_level_t level, const char *linefeed);
         holog_res_t (*destroy)(holog_device_t *dev);
 
         holog_res_t (*register_device)(holog_device_t *dev);
         holog_res_t (*unregister_device)(holog_device_t *dev);
 
-        holog_res_t (*printf)(holog_level_t level, char *file_path, char * file_name, int line, const char *fmt, ...);
+        holog_res_t (*printf)(holog_level_t level, char *file_path, char *file_name, int line, const char *fmt, ...);
 
         void (*set_level)(holog_device_t *dev, holog_level_t level);
 
@@ -114,7 +115,6 @@ holog_res_t holog_deinit();
 #define holog_error(fmt, ...)   holog()->printf(HOLOG_LEVEL_ERROR, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
 #define holog_warning(fmt, ...) holog()->printf(HOLOG_LEVEL_WARNING, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
 #define holog_fatal(fmt, ...)   holog()->printf(HOLOG_LEVEL_FATAL, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
-
 
 
 #ifdef __cplusplus
