@@ -28,6 +28,7 @@
 #define HOLOG_GET_TIMESTAMP()       (time(NULL))
 
 #define HOLOG_USE_COLOR          (1)
+
 #define HOLOG_COLOR_NONE         "\033[m"
 #define HOLOG_COLOR_RED          "\033[0;32;31m"
 #define HOLOG_COLOR_LIGHT_RED    "\033[1;31m"

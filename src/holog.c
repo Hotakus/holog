@@ -16,7 +16,24 @@
 
 
 #define HOLOG_BANNER "[Recorded by HoLog]"
-const char *log_string[] = {"INFO", "ERROR", "WARNING", "FATAL", "DEBUG", "TRACE"};
+
+typedef struct holog_log_string_t {
+    const char *level;
+    const char *color;
+} holog_log_string_t;
+
+static holog_log_string_t log_string_list[] = {
+        {"INFO",    HOLOG_COLOR_CYAN},
+        {"ERROR",   HOLOG_COLOR_RED},
+        {"WARNING", HOLOG_COLOR_YELLOW},
+        {"FATAL",   HOLOG_COLOR_LIGHT_RED},
+        {"DEBUG",   HOLOG_COLOR_DARY_GRAY},
+        {"TRACE",   HOLOG_COLOR_BROWN}
+};
+
+//static const char *log_string[] = {
+//        "INFO", "ERROR", "WARNING", "FATAL", "DEBUG", "TRACE"
+//};
 const uint8_t style_list[] = HOLOG_LOG_STYLE_LIST;
 
 static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level);
@@ -145,9 +162,9 @@ holog_res_t holog_register_device(holog_device_t *dev) {
     homsg_subject_t *subject = NULL;
     for (int i = 1, k = 0; i < HOLOG_LEVEL_END; i = i << 1, k++) {
         if ((dev->level & i) == i) {
-            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string[k], true);
+            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string_list[k].level, true);
             if (subject_node == NULL) {
-                subject = instance.psp->create_subject((char *)log_string[k]);
+                subject = instance.psp->create_subject((char *)log_string_list[k].level);
                 instance.psp->publish(instance.psp, subject);
             } else {
                 subject = (homsg_subject_t *)subject_node->data;
@@ -216,7 +233,7 @@ holog_res_t unregister_device(holog_device_t *dev) {
     homsg_subject_t *subject = NULL;
     for (int i = 1, k = 0; i < HOLOG_LEVEL_END; i = i << 1, k++) {
         if ((dev->level & i) == i) {
-            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string[k], true);
+            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string_list[k].level, true);
             if (subject_node == NULL) {
                 return HOLOG_RES_ERROR;
             }
@@ -248,7 +265,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
     homsg_subject_t *subject = NULL;
     for (int i = 1, k = 0; i < HOLOG_LEVEL_END; i = i << 1, k++) {
         if (i == level) {
-            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string[k], true);
+            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string_list[k].level, true);
             if (subject_node == NULL) {
                 return HOLOG_RES_ERROR;
             }
@@ -274,17 +291,19 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                     return HOLOG_RES_ERROR;
                 }
 
+                // 风格化消息
                 holog_msg_t msg;
                 const char **style_p = ((const char **)(&msg.style.A));
-
 #if (HOLOG_USE_COLOR == 1)
                 uint8_t pos_step = 32;
 #else
                 uint8_t pos_step = 16;
 #endif
-                uint16_t date_pos = (sizeof(style_buf) >> 1) + 0;
-                uint16_t time_pos = (sizeof(style_buf) >> 1) + pos_step * 1;
-                uint16_t path_pos = (sizeof(style_buf) >> 1) + pos_step * 2;
+                uint16_t buf_half = (sizeof(style_buf) >> 1);
+                uint16_t date_pos = buf_half + 0;
+                uint16_t time_pos = buf_half + pos_step * 1;
+                uint16_t path_pos = buf_half + pos_step * 2;
+                uint16_t type_pos = buf_half + pos_step * 3;
 
                 time_t timestamp = HOLOG_GET_TIMESTAMP();
                 struct tm *tm = localtime(&timestamp);
@@ -292,21 +311,30 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 for (int j = 0; j < sizeof(style_list); ++j) {
                     switch (style_list[j]) {
                         case HOLOG_STYLE_TIME : {
-#if (HOLOG_USE_COLOR == 1)
-                            strftime(&style_buf[time_pos], pos_step, HOLOG_COLOR_BLUE"%H:%M:%S"HOLOG_COLOR_NONE, tm);
-#else
-                            strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
-#endif
+                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                                strftime(&style_buf[time_pos], pos_step, HOLOG_COLOR_BLUE"%H:%M:%S"HOLOG_COLOR_NONE, tm);
+                            } else {
+                                strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
+                            }
                             style_p[j] = &style_buf[time_pos];
                             break;
                         }
                         case HOLOG_STYLE_DATE : {
-                            strftime(&style_buf[date_pos], pos_step, "%Y-%m-%d", tm);
+                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                                strftime(&style_buf[date_pos], pos_step, HOLOG_COLOR_BLUE"%Y-%m-%d"HOLOG_COLOR_NONE, tm);
+                            } else {
+                                strftime(&style_buf[date_pos], pos_step, "%Y-%m-%d", tm);
+                            }
                             style_p[j] = &style_buf[date_pos];
                             break;
                         }
                         case HOLOG_STYLE_TYPE : {
-                            style_p[j] = log_string[k];
+                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                                sprintf(&style_buf[type_pos], "%s""%s"HOLOG_COLOR_NONE, log_string_list[k].color, log_string_list[k].level);
+                                style_p[j] = &style_buf[type_pos];
+                            } else {
+                                style_p[j] = log_string_list[k].level;
+                            }
                             break;
                         }
                         case HOLOG_STYLE_MAIN_CONTENT : {
