@@ -24,12 +24,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin) # 可执行文件
 
 # main add
 add_definitions(-DDUMMY_DEFINE)
-add_compile_options(-fdata-sections -ffunction-sections -Wall -O2)
-add_link_options(-Wl,-Map=object.map,--cref,--gc-section)
+#add_compile_options(-fdata-sections -ffunction-sections -Wall -O2)
+#add_link_options(-Wl,-Map=object.map,--cref,--gc-section)
 
 include_directories(./inc ./)
 include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
-
 
 
 #file(GLOB_RECURSE SOURCES "./*.c" "./*.h")
