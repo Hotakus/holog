@@ -37,6 +37,6 @@ add_subdirectory(./src/homsg_psp)
 
 include(${PROJECT_SOURCE_DIR}/toolchain.cmake)
 
-add_executable(holog ./src/holog.c ./src/holog_utils.c ./test.c)
+add_executable(holog ./src/holog.c ./src/holog_utils.c ./test.c ./holog_conf.h)
 #add_library(holog ./src/holog.c ./src/holog_utils.c)
 target_link_libraries(holog homsg_psp)
