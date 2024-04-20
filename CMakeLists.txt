@@ -34,4 +34,8 @@ add_subdirectory(./src/homsg_psp)
 #add_executable(holog ./src/holog.c test.c)
 add_library(holog STATIC ./src/holog.c)
 target_link_libraries(holog homsg_psp)
-target_include_directories(holog PUBLIC ${LIB_INC})
+target_include_directories(holog PUBLIC
+                           ${CMAKE_CURRENT_SOURCE_DIR}/
+                           ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp
+                           ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp/src/chain
+)
