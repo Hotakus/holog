@@ -7,12 +7,15 @@
   ******************************************************************************
   */
 
-#include "holog.h"
+
 #include <stdio.h>
-#include "homsg_psp.h"
-#include "holog_conf.h"
 #include <stdarg.h>
 #include <string.h>
+#include <time.h>
+
+#include "homsg_psp.h"
+#include "holog_conf.h"
+#include "holog.h"
 
 typedef struct holog_log_string_t {
     const char *level;

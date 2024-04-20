@@ -30,7 +30,6 @@
 #endif
 
 // customize your own timestamp
-#include <time.h>
 //#define HOLOG_GET_TIMESTAMP()    (time(NULL))
 #define HOLOG_GET_TIMESTAMP()    (0)
 
