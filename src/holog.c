@@ -293,7 +293,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                     switch (style_list[j]) {
                         case HOLOG_STYLE_TIME : {
 #if (HOLOG_USE_COLOR == 1)
-                            strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
+                            strftime(&style_buf[time_pos], pos_step, HOLOG_COLOR_BLUE"%H:%M:%S"HOLOG_COLOR_NONE, tm);
 #else
                             strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
 #endif
