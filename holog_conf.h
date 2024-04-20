@@ -27,6 +27,24 @@
 
 #define HOLOG_GET_TIMESTAMP()       (time(NULL))
 
+#define HOLOG_USE_COLOR          (1)
+#define HOLOG_COLOR_NONE         "\033[m"
+#define HOLOG_COLOR_RED          "\033[0;32;31m"
+#define HOLOG_COLOR_LIGHT_RED    "\033[1;31m"
+#define HOLOG_COLOR_GREEN        "\033[0;32;32m"
+#define HOLOG_COLOR_LIGHT_GREEN  "\033[1;32m"
+#define HOLOG_COLOR_BLUE         "\033[0;32;34m"
+#define HOLOG_COLOR_LIGHT_BLUE   "\033[1;34m"
+#define HOLOG_COLOR_DARY_GRAY    "\033[1;30m"
+#define HOLOG_COLOR_CYAN         "\033[0;36m"
+#define HOLOG_COLOR_LIGHT_CYAN   "\033[1;36m"
+#define HOLOG_COLOR_PURPLE       "\033[0;35m"
+#define HOLOG_COLOR_LIGHT_PURPLE "\033[1;35m"
+#define HOLOG_COLOR_BROWN        "\033[0;33m"
+#define HOLOG_COLOR_YELLOW       "\033[1;33m"
+#define HOLOG_COLOR_LIGHT_GRAY   "\033[0;37m"
+#define HOLOG_COLOR_WHITE        "\033[1;37m"
+
 typedef enum holog_style_define_t {
     HOLOG_STYLE_TYPE,
     HOLOG_STYLE_TIME,
@@ -38,11 +56,13 @@ typedef enum holog_style_define_t {
     HOLOG_STYLE_END
 } holog_style_define_t;
 
+
 #define HOLOG_STYLE_A                   (HOLOG_STYLE_TIME)
 #define HOLOG_STYLE_B                   (HOLOG_STYLE_TYPE)
 #define HOLOG_STYLE_C                   (HOLOG_STYLE_FILE_NAME)
 #define HOLOG_STYLE_D                   (HOLOG_STYLE_MAIN_CONTENT)
 #define HOLOG_LOG_STYLE_LIST            {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
+
 
 
 #ifdef __cplusplus

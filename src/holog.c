@@ -276,9 +276,15 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
 
                 holog_msg_t msg;
                 const char **style_p = ((const char **)(&msg.style.A));
-                uint16_t date_pos = sizeof(style_buf) / 2 + 0;
-                uint16_t time_pos = sizeof(style_buf) / 2 + 16;
-                uint16_t path_pos = sizeof(style_buf) / 2 + 32;
+
+#if (HOLOG_USE_COLOR == 1)
+                uint8_t pos_step = 32;
+#else
+                uint8_t pos_step = 16;
+#endif
+                uint16_t date_pos = (sizeof(style_buf) >> 1) + 0;
+                uint16_t time_pos = (sizeof(style_buf) >> 1) + pos_step * 1;
+                uint16_t path_pos = (sizeof(style_buf) >> 1) + pos_step * 2;
 
                 time_t timestamp = HOLOG_GET_TIMESTAMP();
                 struct tm *tm = localtime(&timestamp);
@@ -286,12 +292,16 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 for (int j = 0; j < sizeof(style_list); ++j) {
                     switch (style_list[j]) {
                         case HOLOG_STYLE_TIME : {
-                            strftime(&style_buf[time_pos], 16, "%H:%M:%S", tm);
+#if (HOLOG_USE_COLOR == 1)
+                            strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
+#else
+                            strftime(&style_buf[time_pos], pos_step, "%H:%M:%S", tm);
+#endif
                             style_p[j] = &style_buf[time_pos];
                             break;
                         }
                         case HOLOG_STYLE_DATE : {
-                            strftime(&style_buf[date_pos], 16, "%Y-%m-%d", tm);
+                            strftime(&style_buf[date_pos], pos_step, "%Y-%m-%d", tm);
                             style_p[j] = &style_buf[date_pos];
                             break;
                         }
@@ -378,7 +388,8 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 
 void holog_stdout_callback(void *params) {
     holog_msg_t *msg = (holog_msg_t *)params;
-    printf("%s %s %s %s %s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    printf("%s" " " "%s" " " "%s" " " "%s" " " "%s",
+           msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
 }
 
 void holog_common_file_callback(void *params) {
@@ -403,7 +414,8 @@ void holog_common_file_callback(void *params) {
     }
 
     fseek(fp, 0, SEEK_END);
-    fprintf(fp, "%s %s %s %s %s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
+    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s",
+            msg->style.A, msg->style.B, msg->style.C, msg->style.D, HOLOG_LINEFEED);
 
     fclose(fp);
 #endif
