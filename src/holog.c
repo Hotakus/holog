@@ -23,12 +23,12 @@ typedef struct holog_log_string_t {
 } holog_log_string_t;
 
 static holog_log_string_t log_string_list[] = {
-        {"INFO",    HOLOG_COLOR_CYAN},
-        {"ERROR",   HOLOG_COLOR_RED},
+        {"INFO   ",    HOLOG_COLOR_CYAN},
+        {"ERROR  ",   HOLOG_COLOR_RED},
         {"WARNING", HOLOG_COLOR_YELLOW},
-        {"FATAL",   HOLOG_COLOR_LIGHT_RED},
-        {"DEBUG",   HOLOG_COLOR_DARY_GRAY},
-        {"TRACE",   HOLOG_COLOR_BROWN}
+        {"FATAL  ",   HOLOG_COLOR_LIGHT_RED},
+        {"DEBUG  ",   HOLOG_COLOR_LIGHT_GRAY},
+        {"TRACE  ",   HOLOG_COLOR_BROWN}
 };
 
 //static const char *log_string[] = {
