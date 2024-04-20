@@ -7,33 +7,11 @@ project(holog
 )
 set(CMAKE_C_STANDARD 99)
 
+include(${PROJECT_SOURCE_DIR}/toolchain.cmake)
+
 # 指定版本号的配置文件
 configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${PROJECT_SOURCE_DIR}/version.h)
 
-# 系统设置
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    MESSAGE(STATUS "Current platform: Linux ")
-    if(NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Debug)
-    endif()
-elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
-    MESSAGE(STATUS "Current platform: Windows")
-elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-    MESSAGE(STATUS "Current platform: FreeBSD")
-else ()
-    MESSAGE(STATUS "Unknown platform: ${CMAKE_SYSTEM_NAME}")
-endif (CMAKE_SYSTEM_NAME MATCHES "Linux")
-MESSAGE(STATUS "Current build type: ${CMAKE_BUILD_TYPE}")
-
-
-find_program(CCACHE_PROGRAM ccache)
-if(CCACHE_PROGRAM)
-    message(STATUS "Set up ccache ...")
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-else ()
-    message(WARNING "Can not find ccache. (you can ignore this tip.)")
-endif()
 
 #设置输出目录
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib) # 设置静态库文件目录
@@ -54,13 +32,9 @@ include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
 
 
 
-SET(CMAKE_C_COMPILER /root/dl/arm-none-eabi/arm-none-eabi/bin/arm-none-eabi-gcc)
 #file(GLOB_RECURSE SOURCES "./*.c" "./*.h")
 #add_subdirectory(./eg)
 add_subdirectory(./src/homsg_psp)
-
-#message(WARNING     "${LINK_FLAGS}")
-#message(WARNING     "${CMAKE_C_FLAGS}")
 
 add_executable(holog ./src/holog.c ./src/holog_utils.c ./test.c)
 #add_library(holog ./src/holog.c ./src/holog_utils.c)
