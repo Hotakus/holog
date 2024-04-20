@@ -60,9 +60,10 @@ int main() {
     // Print logs
     // Programe will assign logs automatically to corresponding devices you registered
     holog_info("This is info %d.", 114514);
+    printf("6\r\n");
     holog_warning("This is warning.");
     holog_error("This is error.");
-
+    printf("7\r\n");
 
 //    holog_device_t *stdout_dev = holog()->create("stdout_dev", HOLOG_DEVICE_TYPE_STDOUT, HOLOG_LEVEL_ALL);
 //    holog()->register_device(stdout_dev);
