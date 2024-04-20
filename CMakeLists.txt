@@ -17,15 +17,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin) # 可执行文件
 
 #设置编译、链接参数等
 #set(LINK_FLAGS      "${LINK_FLAGS} -Wl,-Map=object.map,--cref,--gc-section")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -Wall")
 
 # main add
 add_definitions(-DDUMMY_DEFINE)
-include_directories(./inc ./)
-include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
+include_directories(
+        ./inc ./
+        ./src/homsg_psp
+        ./src/homsg_psp/src/chain
+        LIB_INC
+)
+#include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
 
 add_subdirectory(./src/homsg_psp)
 
-#add_executable(holog ./src/holog.c test.c)
-add_library(holog STATIC ./src/holog.c)
+add_executable(holog ./src/holog.c test.c)
+#add_library(holog STATIC ./src/holog.c)
 target_link_libraries(holog homsg_psp)
+target_include_directories(holog PUBLIC ${LIB_INC})
