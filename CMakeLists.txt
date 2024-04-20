@@ -26,5 +26,6 @@ include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
 
 add_subdirectory(./src/homsg_psp)
 
-add_executable(holog ./src/holog.c test.c)
+#add_executable(holog ./src/holog.c test.c)
+add_library(holog STATIC ./src/holog.c)
 target_link_libraries(holog homsg_psp)
