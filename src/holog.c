@@ -27,7 +27,7 @@ static holog_log_string_t log_string_list[] = {
         {"ERROR  ",   HOLOG_COLOR_RED},
         {"WARNING", HOLOG_COLOR_YELLOW},
         {"FATAL  ",   HOLOG_COLOR_LIGHT_RED},
-        {"DEBUG  ",   HOLOG_COLOR_LIGHT_GRAY},
+        {"DEBUG  ",   HOLOG_COLOR_DARY_GRAY},
         {"TRACE  ",   HOLOG_COLOR_BROWN}
 };
 
@@ -342,12 +342,20 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             break;
                         }
                         case HOLOG_STYLE_FILE_NAME : {
-                            sprintf(&style_buf[path_pos], "%s:%d:", file_name, line);
+                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                                sprintf(&style_buf[path_pos], HOLOG_COLOR_DARY_GRAY"%s:%d:"HOLOG_COLOR_NONE, file_name, line);
+                            } else {
+                                sprintf(&style_buf[path_pos], "%s:%d:", file_name, line);
+                            }
                             style_p[j] = &style_buf[path_pos];
                             break;
                         }
                         case HOLOG_STYLE_FILE_PATH : {
-                            sprintf(&style_buf[path_pos], "%s:%d:", file_path, line);
+                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                                sprintf(&style_buf[path_pos], HOLOG_COLOR_DARY_GRAY"%s:%d:"HOLOG_COLOR_NONE, file_path, line);
+                            } else {
+                                sprintf(&style_buf[path_pos], "%s:%d:", file_path, line);
+                            }
                             style_p[j] = &style_buf[path_pos];
                             break;
                         }
