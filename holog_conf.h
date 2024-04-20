@@ -30,8 +30,13 @@
 #endif
 
 // customize your own timestamp
-//#define HOLOG_GET_TIMESTAMP()    (time(NULL))
+
+// if platform is arm, use time(NULL)
+#if defined(__arm__) || defined(__aarch64__)
 #define HOLOG_GET_TIMESTAMP()    (0)
+#else
+#define HOLOG_GET_TIMESTAMP()    (time(NULL))
+#endif
 
 // color
 #define HOLOG_USE_COLOR          (1)
@@ -53,12 +58,12 @@
 #define HOLOG_COLOR_WHITE        "\033[1;37m"
 
 // you can customize color for each part of style
-#define HOLOG_LOG_STYLE_LIST_INFO    {"INFO   ", HOLOG_COLOR_LIGHT_CYAN}
-#define HOLOG_LOG_STYLE_LIST_ERROR   {"ERROR  ", HOLOG_COLOR_RED}
+#define HOLOG_LOG_STYLE_LIST_INFO    {"INFO", HOLOG_COLOR_LIGHT_CYAN}
+#define HOLOG_LOG_STYLE_LIST_ERROR   {"ERROR", HOLOG_COLOR_RED}
 #define HOLOG_LOG_STYLE_LIST_WARNING {"WARNING", HOLOG_COLOR_YELLOW}
-#define HOLOG_LOG_STYLE_LIST_FATAL   {"FATAL  ", HOLOG_COLOR_LIGHT_RED}
-#define HOLOG_LOG_STYLE_LIST_DEBUG   {"DEBUG  ", HOLOG_COLOR_DARY_GRAY}
-#define HOLOG_LOG_STYLE_LIST_TRACE   {"TRACE  ", HOLOG_COLOR_BROWN}
+#define HOLOG_LOG_STYLE_LIST_FATAL   {"FATAL", HOLOG_COLOR_LIGHT_RED}
+#define HOLOG_LOG_STYLE_LIST_DEBUG   {"DEBUG", HOLOG_COLOR_DARY_GRAY}
+#define HOLOG_LOG_STYLE_LIST_TRACE   {"TRACE", HOLOG_COLOR_BROWN}
 
 // holog style
 typedef enum holog_style_define_t {

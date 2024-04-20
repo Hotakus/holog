@@ -33,7 +33,7 @@ static holog_log_string_t log_string_list[] = {
 
 static const uint8_t style_list[] = HOLOG_LOG_STYLE_LIST;
 
-static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level);
+static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, bool use_color);
 static holog_res_t holog_dev_destroy(holog_device_t *dev);
 
 static holog_res_t holog_register_device(holog_device_t *dev);
@@ -113,15 +113,14 @@ holog_res_t holog_deinit() {
  * @param level
  * @return
  */
-holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level) {
+holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level , bool use_color) {
     holog_device_t *dev = malloc(sizeof(holog_device_t));
 
     dev->name = name;
-
     dev->type = type;
     dev->log_path = NULL;
-
     dev->level = level;
+    dev->use_color = use_color;
 
     return dev;
 }
@@ -261,27 +260,32 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
         if (i == level) {
             subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_string_list[k].level, true);
             if (subject_node == NULL) {
+                free(style_buf);
                 return HOLOG_RES_ERROR;
             }
 
             subject = (homsg_subject_t *)subject_node->data;
             if (subject == NULL) {
+                free(style_buf);
                 return HOLOG_RES_ERROR;
             }
 
             // 遍历所有订阅者
             chain_node_t *subscriber = subject->subscribers->head->next_node;
             if (subscriber == subject->subscribers->tail) {
+                free(style_buf);
                 return HOLOG_RES_ERROR;
             }
             while (subscriber != subject->subscribers->tail) {
                 chain_node_t *registered_subscriber = chain_find_node_by_name(instance.devices, subscriber->name, true);
                 if (registered_subscriber == NULL) {
+                    free(style_buf);
                     return HOLOG_RES_ERROR;
                 }
 
                 holog_device_t *dev = (holog_device_t *)registered_subscriber->data;
                 if (dev == NULL) {
+                    free(style_buf);
                     return HOLOG_RES_ERROR;
                 }
 
@@ -302,7 +306,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 time_t timestamp = HOLOG_GET_TIMESTAMP();
                 struct tm *tm = localtime(&timestamp);
 
-                memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
+                // memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
                 for (int j = 0; j < sizeof(style_list); ++j) {
                     switch (style_list[j]) {
                         case HOLOG_STYLE_TIME : {
@@ -462,7 +466,7 @@ void holog_fatfs_callback(void *params) {
     holog_msg_t *msg = (holog_msg_t *)params;
 
     FIL fil;
-    FRESULT res = f_open(&fil, msg->path, FA_WRITE | FA_CREATE_ALWAYS);
+    FRESULT res = f_open(&fil, msg->path, FA_WRITE | FA_OPEN_APPEND | FA_CREATE_ALWAYS);
     if (res != FR_OK) {
         return;
     }

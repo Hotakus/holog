@@ -73,6 +73,7 @@ typedef struct holog_device_t {
     const char *log_path;
 
     uint8_t level;
+    bool use_color;
 } holog_device_t;
 
 typedef struct holog_t holog_t;
@@ -81,7 +82,7 @@ typedef struct holog_t {
     chain_t *devices;
 
     struct {
-        holog_device_t *(*create)(const char *name, holog_device_type_t type, holog_level_t level);
+        holog_device_t *(*create)(const char *name, holog_device_type_t type, holog_level_t level, bool use_color);
         holog_res_t (*destroy)(holog_device_t *dev);
 
         holog_res_t (*register_device)(holog_device_t *dev);
