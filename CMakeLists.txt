@@ -60,5 +60,5 @@ add_subdirectory(./src/homsg_psp)
 #message(WARNING     "${CMAKE_C_FLAGS}")
 
 add_executable(holog ./src/holog.c ./src/holog_utils.c ./test.c)
+#add_library(holog ./src/holog.c ./src/holog_utils.c)
 target_link_libraries(holog homsg_psp)
-#target_link_libraries(holog eg)
