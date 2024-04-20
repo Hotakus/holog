@@ -10,8 +10,6 @@ set(CMAKE_C_STANDARD 99)
 # 指定版本号的配置文件
 configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${PROJECT_SOURCE_DIR}/version.h)
 
-SET(CMAKE_C_COMPILER /root/dl/arm-none-eabi/arm-none-eabi/bin/arm-none-eabi-gcc)
-
 # 系统设置
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "Current platform: Linux ")
@@ -54,6 +52,9 @@ add_link_options(-Wl,-Map=object.map,--cref,--gc-section)
 include_directories(./inc ./)
 include_directories(./src/homsg_psp ./src/homsg_psp/src/chain)
 
+
+
+SET(CMAKE_C_COMPILER /root/dl/arm-none-eabi/arm-none-eabi/bin/arm-none-eabi-gcc)
 #file(GLOB_RECURSE SOURCES "./*.c" "./*.h")
 #add_subdirectory(./eg)
 add_subdirectory(./src/homsg_psp)
