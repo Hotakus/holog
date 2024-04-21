@@ -4,6 +4,8 @@
 
 /*-build-*
 /build
+/bin
+/lib
 *.log
 
 # Object files
