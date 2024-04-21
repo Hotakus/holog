@@ -29,8 +29,10 @@ add_executable(holog ./src/holog.c test.c)
 target_link_libraries(holog homsg_psp)
 target_include_directories(holog PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}
+                           ${CMAKE_CURRENT_SOURCE_DIR}/inc
                            ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp
                            ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp/src/chain
 
+                           ${CMAKE_CURRENT_SOURCE_DIR}/ctp/fatfs/inc
                            ${CMAKE_CURRENT_SOURCE_DIR}/ctp/littlefs
 )
