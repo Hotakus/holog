@@ -20,7 +20,7 @@
 
 // enable: 1, disable: 0
 #define HOLOG_STDOUT_ENABLED        (1)
-#define HOLOG_COMMON_FILE_ENABLED   (0)
+#define HOLOG_COMMON_FILE_ENABLED   (1)
 #define HOLOG_FATFS_ENABLED         (0)
 #define HOLOG_LITTLEFS_ENABLED      (0)
 
