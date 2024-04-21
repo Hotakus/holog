@@ -17,20 +17,7 @@
 #include "holog_conf.h"
 #include "holog.h"
 
-typedef struct holog_log_string_t {
-    const char *level;
-    const char *color;
-} holog_log_string_t;
-
-static holog_log_string_t log_level_list[] = {
-        HOLOG_LOG_STYLE_LIST_INFO,
-        HOLOG_LOG_STYLE_LIST_ERROR,
-        HOLOG_LOG_STYLE_LIST_WARNING,
-        HOLOG_LOG_STYLE_LIST_FATAL,
-        HOLOG_LOG_STYLE_LIST_DEBUG,
-        HOLOG_LOG_STYLE_LIST_TRACE
-};
-
+static holog_log_level_t log_level_list[] = HOLOG_LOG_LEVEL_STYLE;
 static const holog_style_list_t style_list[] = HOLOG_LOG_STYLE_LIST;
 
 static holog_device_t *holog_dev_create(const char *name, holog_device_type_t type, holog_level_t level, const char *linefeed);
@@ -305,7 +292,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
 
                 // 风格化消息
                 const char **style_p = ((const char **)(&dev->style.A));
-                memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
+                memset(style_buf, '\0', HOLOG_PRINTF_MAX_SIZE);
                 for (int j = 0; j < sizeof(style_list) / sizeof(holog_style_list_t); ++j) {
                     switch (style_list[j].style) {
                         case HOLOG_STYLE_TIME : {
@@ -531,7 +518,7 @@ void holog_littlefs_callback(void *params) {
         if (err != LFS_ERR_OK) {
             return;
         }
-        lfs_file_write(msg->lfs, &file, " ", 1);
+//        lfs_file_write(msg->lfs, &file, " ", 1);
     }
 
     err = lfs_file_write(msg->lfs, &file, msg->linefeed, strlen(msg->linefeed));

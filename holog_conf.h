@@ -20,7 +20,7 @@
 
 // enable: 1, disable: 0
 #define HOLOG_STDOUT_ENABLED        (1)
-#define HOLOG_COMMON_FILE_ENABLED   (1)
+#define HOLOG_COMMON_FILE_ENABLED   (0)
 #define HOLOG_FATFS_ENABLED         (0)
 #define HOLOG_LITTLEFS_ENABLED      (0)
 
@@ -70,12 +70,19 @@
 #define HOLOG_COLOR_WHITE        "\033[1;37m"
 
 // you can customize color for each part of style
-#define HOLOG_LOG_STYLE_LIST_INFO    {"INF" , HOLOG_COLOR_LIGHT_CYAN}
-#define HOLOG_LOG_STYLE_LIST_ERROR   {"ERR", HOLOG_COLOR_RED}
-#define HOLOG_LOG_STYLE_LIST_WARNING {"WAR", HOLOG_COLOR_YELLOW}
-#define HOLOG_LOG_STYLE_LIST_FATAL   {"FAT", HOLOG_COLOR_LIGHT_RED}
-#define HOLOG_LOG_STYLE_LIST_DEBUG   {"DEB", HOLOG_COLOR_DARY_GRAY}
-#define HOLOG_LOG_STYLE_LIST_TRACE   {"TRA", HOLOG_COLOR_BROWN}
+#include "./inc/holog_level_style.h"
+#define HOLOG_LOG_LEVEL_STYLE_1_INFO       {"I", HOLOG_COLOR_LIGHT_CYAN}
+#define HOLOG_LOG_LEVEL_STYLE_1_ERROR      {"E", HOLOG_COLOR_RED}
+#define HOLOG_LOG_LEVEL_STYLE_1_WARNING    {"W", HOLOG_COLOR_YELLOW}
+#define HOLOG_LOG_LEVEL_STYLE_1_FATAL      {"F", HOLOG_COLOR_LIGHT_RED}
+#define HOLOG_LOG_LEVEL_STYLE_1_DEBUG      {"D", HOLOG_COLOR_DARY_GRAY}
+#define HOLOG_LOG_LEVEL_STYLE_1_TRACE      {"T", HOLOG_COLOR_BROWN}
+#define HOLOG_LOG_LEVEL_STYLE_1            {HOLOG_LOG_LEVEL_STYLE_1_INFO   , HOLOG_LOG_LEVEL_STYLE_1_ERROR, \
+                                            HOLOG_LOG_LEVEL_STYLE_1_WARNING, HOLOG_LOG_LEVEL_STYLE_1_FATAL, \
+                                            HOLOG_LOG_LEVEL_STYLE_1_DEBUG  , HOLOG_LOG_LEVEL_STYLE_1_TRACE}
+
+// customize your own style for each log level, or use ./inc/holog_level_style.h
+#define HOLOG_LOG_LEVEL_STYLE              HOLOG_LOG_LEVEL_STYLE_1
 
 // holog style
 typedef enum holog_style_define_t {
@@ -94,18 +101,15 @@ typedef enum holog_style_define_t {
 // the HOLOG_STYLE_MAIN_CONTENT is the main body of log.
 // example: <HOLOG_STYLE_TIME> <HOLOG_STYLE_LEVEL> <HOLOG_STYLE_FILE_NAME> <HOLOG_STYLE_MAIN_CONTENT>
 // out: [16:01:20 INFO] holog_conf.h:100: your information.
-
-typedef struct holog_style_list_t {
-    holog_style_define_t style;
-    const char *bracket;
-} holog_style_list_t;
-
+#include "./inc/holog_style_list.h"
 #define HOLOG_STYLE_A                   {HOLOG_STYLE_TIME,          "[]"}
 #define HOLOG_STYLE_B                   {HOLOG_STYLE_LEVEL,         "[]"}
 #define HOLOG_STYLE_C                   {HOLOG_STYLE_FILE_NAME,     "[]"}
 #define HOLOG_STYLE_D                   {HOLOG_STYLE_MAIN_CONTENT,  "  "}
-#define HOLOG_LOG_STYLE_LIST            {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
+#define HOLOG_STYLE_DEFAULT             {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
 
+// customize your own log style, or use ./inc/holog_style_list.h
+#define HOLOG_LOG_STYLE_LIST            HOLOG_CUSTOM_STYLE_1
 
 // extra define
 #ifndef __FILE_NAME__

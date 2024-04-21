@@ -35,6 +35,13 @@ typedef enum holog_level_t {
     HOLOG_LEVEL_TRACE = 0x20,      // (32)   Trace
     HOLOG_LEVEL_END,               // (0x21) End
 } holog_level_t;
+#define HOLOG_LEVEL_ALL (HOLOG_LEVEL_INFO |   \
+                        HOLOG_LEVEL_ERROR |   \
+                        HOLOG_LEVEL_WARNING | \
+                        HOLOG_LEVEL_FATAL |   \
+                        HOLOG_LEVEL_DEBUG |   \
+                        HOLOG_LEVEL_TRACE)
+
 
 typedef enum holog_device_type_t holog_device_type_t;
 typedef enum holog_device_type_t {
@@ -97,8 +104,6 @@ holog_t *holog();
 holog_res_t holog_init();
 holog_res_t holog_deinit();
 
-
-#define HOLOG_LEVEL_ALL (HOLOG_LEVEL_INFO | HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_FATAL | HOLOG_LEVEL_DEBUG | HOLOG_LEVEL_TRACE)
 
 #define holog_debug(fmt, ...)   holog()->printf(HOLOG_LEVEL_DEBUG, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
 #define holog_trace(fmt, ...)   holog()->printf(HOLOG_LEVEL_TRACE, __FILE__, __FILE_NAME__, __LINE__, fmt, ##__VA_ARGS__)
