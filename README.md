@@ -1,6 +1,6 @@
 <center>
   <img src="./assets/holog_banner.png" title="" alt="banner" data-align="center">
-<h3 align="center">Holog</h3>
+<h2 align="center">Holog</h2>
 </center>
 
 <div align="center">
