@@ -443,6 +443,7 @@ void holog_stdout_callback(void *params) {
 #endif
 }
 
+#if (HOLOG_AUTO_FILE_CREATE_BY_DATE == 1)
 static char *auto_file_name_create(const char *root) {
     time_t t = HOLOG_GET_TIMESTAMP();
     struct tm *tm = localtime(&t);
@@ -452,6 +453,7 @@ static char *auto_file_name_create(const char *root) {
     sprintf(name, "%s"HOLOG_AUTO_FILE_FORMAT, root, tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday);
     return name;
 }
+#endif
 
 void holog_common_file_callback(void *params) {
 #if (HOLOG_COMMON_FILE_ENABLED == 1)
