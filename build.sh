@@ -8,10 +8,14 @@ cmake .. "$@"
 # 使用 make -j 编译
 make -j12
 cd ..
-cp ./bin/holog .
+
+# 检查文件是否存在并复制文件
+if [ -f "./bin/holog" ]; then
+    cp ./bin/holog .
+    echo "File copied successfully."
+fi
 
 mkdir -p ./archive
-
 cp ./lib/libholog.a ./archive
 cp ./*.h ./archive
 
