@@ -23,5 +23,27 @@
 
 ### Quickly Start：
 
-First, you need pull this repo:  
-`git clone --recurse-submodules git@github.com:Hotakus/holog.git`
+First, you need pull this repo, use SSH:  
+```shell
+git clone --recurse-submodules git@github.com:Hotakus/holog.git
+cd holog
+```
+
+Now you can use build.sh to build this project, or use your CMakeLists.txt to import this project:
+
+**1️⃣ Use CMakeLists.txt to import:**  
+in your project(not this project), write below:
+```cmake
+
+```
+
+
+  a  
+  a  
+  a  
+    a  
+a  
+  aa  
+  a  
+  a  
+  a  
