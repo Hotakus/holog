@@ -3,6 +3,7 @@
 *.d
 
 /*-build-*
+/build
 *.log
 
 # Object files
