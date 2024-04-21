@@ -7,10 +7,14 @@
   ******************************************************************************
   */
 
+#include <stdio.h>
 #include "holog.h"
 
 
 int main() {
+
+    printf("Hello World! %llu\n", sizeof(PROJECT_ROOT_DIR));
+    printf("Hello World! %s\n", &__FILE__[sizeof(PROJECT_ROOT_DIR)]);
 
     // HoLog initialize
     holog_init();

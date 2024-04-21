@@ -59,30 +59,30 @@ typedef struct holog_style_t {
     const char *D;
 } holog_style_t;
 
-typedef struct holog_msg_t holog_msg_t;
-typedef struct holog_msg_t {
-    holog_style_t style;
-    const char *path;
-    const char *linefeed;
-
-#if (HOLOG_LITTLEFS_ENABLED == 1)
-    lfs_t *lfs;
-#endif
-
-} holog_msg_t;
+//typedef struct holog_msg_t holog_msg_t;
+//typedef struct holog_msg_t {
+//    holog_style_t style;
+//    const char *path;
+//    const char *linefeed;
+//
+//#if (HOLOG_LITTLEFS_ENABLED == 1)
+//    lfs_t *lfs;
+//#endif
+//
+//} holog_msg_t;
 
 typedef struct holog_device_t holog_device_t;
 typedef struct holog_device_t {
     const char *name;
     const char *linefeed;
-
-    holog_device_type_t type;
     const char *log_path;
 
 #if (HOLOG_LITTLEFS_ENABLED == 1)
     lfs_t *lfs;
 #endif
 
+    holog_device_type_t type;
+    holog_style_t style;
     uint8_t level;
 } holog_device_t;
 

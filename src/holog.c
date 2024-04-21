@@ -290,8 +290,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 }
 
                 // 风格化消息
-                holog_msg_t msg;
-                const char **style_p = ((const char **)(&msg.style.A));
+                const char **style_p = ((const char **)(&dev->style.A));
 #if (HOLOG_USE_COLOR == 1)
                 uint8_t pos_step = 32;
 #else
@@ -327,7 +326,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             style_p[j] = &style_buf[date_pos];
                             break;
                         }
-                        case HOLOG_STYLE_TYPE : {
+                        case HOLOG_STYLE_LEVEL : {
                             if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
                                 sprintf(&style_buf[type_pos], "%s""%s"HOLOG_COLOR_NONE, log_string_list[k].color, log_string_list[k].level);
                                 style_p[j] = &style_buf[type_pos];
@@ -366,11 +365,8 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                     }
                 }
 
-                msg.path = dev->log_path;
-                msg.linefeed = dev->linefeed;
-
                 homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
-                update(&msg);    // Run callback
+                update((void *)dev);    // Run callback
                 subscriber = subscriber->next_node;
             }
             break;
@@ -430,16 +426,16 @@ void set_log_path(holog_device_t *dev, const char *log_path) {
 
 void holog_stdout_callback(void *params) {
 #if (HOLOG_STDOUT_ENABLED == 1)
-    holog_msg_t *msg = (holog_msg_t *)params;
+    holog_device_t *msg = (holog_device_t *)params;
     printf("%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 #endif
 }
 
 void holog_common_file_callback(void *params) {
 #if (HOLOG_COMMON_FILE_ENABLED == 1)
-    holog_msg_t *msg = (holog_msg_t *)params;
+    holog_device_t *msg = (holog_device_t *)params;
 
-    FILE *fp = fopen(msg->path, "a+");
+    FILE *fp = fopen(msg->log_path, "a+");
     if (fp == NULL) {
         return;
     }
@@ -459,13 +455,13 @@ void holog_common_file_callback(void *params) {
 
 void holog_fatfs_callback(void *params) {
 #if (HOLOG_FATFS_ENABLED == 1)
-    holog_msg_t *msg = (holog_msg_t *)params;
+    holog_device_t *msg = (holog_device_t *)params;
     FIL fil;
     FILINFO fno;
 
-    f_stat(msg->path, &fno);
+    f_stat(msg->log_path, &fno);
 
-    FRESULT res = f_open(&fil, msg->path, FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
+    FRESULT res = f_open(&fil, msg->log_path, FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
     if (res != FR_OK) {
         return;
     }
@@ -484,11 +480,11 @@ void holog_fatfs_callback(void *params) {
 // todo)): littlefs
 void holog_littlefs_callback(void *params) {
 #if (HOLOG_LITTLEFS_ENABLED == 1)
-    holog_msg_t *msg = (holog_msg_t *)params;
+    holog_device_t *msg = (holog_device_t *)params;
     enum lfs_error err = LFS_ERR_OK;
     lfs_file_t file;
 
-    err = lfs_file_open(msg->lfs, &file, msg->path, LFS_O_RDWR | LFS_O_CREAT);
+    err = lfs_file_open(msg->lfs, &file, msg->log_path, LFS_O_RDWR | LFS_O_CREAT);
     if (err != LFS_ERR_OK) {
         return;
     }

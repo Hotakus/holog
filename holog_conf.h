@@ -20,7 +20,7 @@
 
 // enable or disable
 #define HOLOG_STDOUT_ENABLED        (1)
-#define HOLOG_COMMON_FILE_ENABLED   (1)
+#define HOLOG_COMMON_FILE_ENABLED   (0)
 #define HOLOG_FATFS_ENABLED         (0)
 #define HOLOG_LITTLEFS_ENABLED      (0)
 
@@ -78,7 +78,8 @@
 
 // holog style
 typedef enum holog_style_define_t {
-    HOLOG_STYLE_TYPE,
+    HOLOG_STYLE_NONE,
+    HOLOG_STYLE_LEVEL,
     HOLOG_STYLE_TIME,
     HOLOG_STYLE_DATE,
     HOLOG_STYLE_FILE_NAME,
@@ -90,8 +91,10 @@ typedef enum holog_style_define_t {
 
 // customize your own style, the ABCD is the order of style item.
 // the HOLOG_STYLE_MAIN_CONTENT is the main body of log.
+// example: <HOLOG_STYLE_TIME> <HOLOG_STYLE_LEVEL> <HOLOG_STYLE_FILE_NAME> <HOLOG_STYLE_MAIN_CONTENT>
+// out: 16:01:20 [INFO] holog_conf.h:100: your information.
 #define HOLOG_STYLE_A                   (HOLOG_STYLE_TIME)
-#define HOLOG_STYLE_B                   (HOLOG_STYLE_TYPE)
+#define HOLOG_STYLE_B                   (HOLOG_STYLE_LEVEL)
 #define HOLOG_STYLE_C                   (HOLOG_STYLE_FILE_NAME)
 #define HOLOG_STYLE_D                   (HOLOG_STYLE_MAIN_CONTENT)
 #define HOLOG_LOG_STYLE_LIST            {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
