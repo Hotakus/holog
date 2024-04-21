@@ -15,7 +15,7 @@ if [ -f "./bin/holog" ]; then
     echo "File copied successfully."
 fi
 
-mkdir -p ./archive
-cp ./lib/libholog.a ./archive
-cp ./*.h ./archive
+mkdir -p ./holog
+cp ./lib/libholog.a ./holog
+cp ./*.h ./holog
 
