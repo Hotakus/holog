@@ -447,13 +447,7 @@ void holog_common_file_callback(void *params) {
     // judge empty
     fseek(fp, 0, SEEK_END);
     if (ftell(fp) == 0) {
-        fprintf(fp, "%s""%s", HOLOG_BANNER, HOLOG_LINEFEED);
-    } else {
-        // judge last char
-        fseek(fp, -1, SEEK_END);
-        if (fgetc(fp) != '\n') {
-            fprintf(fp, "%s", HOLOG_LINEFEED);
-        }
+        fprintf(fp, "%s""%s", HOLOG_BANNER, msg->linefeed);
     }
 
     fseek(fp, 0, SEEK_END);
@@ -490,6 +484,40 @@ void holog_fatfs_callback(void *params) {
 // todo)): littlefs
 void holog_littlefs_callback(void *params) {
 #if (HOLOG_LITTLEFS_ENABLED == 1)
+    holog_msg_t *msg = (holog_msg_t *)params;
+    enum lfs_error err = LFS_ERR_OK;
+    lfs_file_t file;
 
+    err = lfs_file_open(msg->lfs, &file, msg->path, LFS_O_RDWR | LFS_O_CREAT);
+    if (err != LFS_ERR_OK) {
+        return;
+    }
+
+    if (lfs_file_size(msg->lfs, &file) == 0) {
+        err = lfs_file_write(msg->lfs, &file, HOLOG_BANNER, strlen(HOLOG_BANNER));
+        if (err != LFS_ERR_OK) {
+            return;
+        }
+    }
+
+    err = lfs_file_seek(msg->lfs, &file, 0, LFS_SEEK_END);
+    if (err != LFS_ERR_OK) {
+        return;
+    }
+    const char **style_p = ((const char **)(&msg->style.A));
+    for (int i = 0; i < sizeof(holog_style_t) / sizeof(msg->style.A); ++i) {
+        err = lfs_file_write(msg->lfs, &file, style_p[i], strlen(style_p[i]));
+        if (err != LFS_ERR_OK) {
+            return;
+        }
+        lfs_file_write(msg->lfs, &file, " ", 1);
+    }
+
+    err = lfs_file_write(msg->lfs, &file, msg->linefeed, strlen(msg->linefeed));
+    if (err != LFS_ERR_OK) {
+        return;
+    }
+
+    lfs_file_close(msg->lfs, &file);
 #endif
 }

@@ -21,20 +21,22 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -Wall")
 
 # main add
 add_definitions(-DDUMMY_DEFINE)
-include_directories(
-        ./inc ./
-        ./src/homsg_psp
-        ./src/homsg_psp/src/chain
-        LIB_INC
-)
+#include_directories(
+#        ./inc ./
+#        ./src/homsg_psp
+#        ./src/homsg_psp/src/chain
+#        LIB_INC
+#)
 
 add_subdirectory(./src/homsg_psp)
 
-#add_executable(holog ./src/holog.c test.c)
-add_library(holog STATIC ./src/holog.c)
+add_executable(holog ./src/holog.c test.c)
+#add_library(holog STATIC ./src/holog.c)
 target_link_libraries(holog homsg_psp)
 target_include_directories(holog PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/
                            ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp
                            ${CMAKE_CURRENT_SOURCE_DIR}/src/homsg_psp/src/chain
+
+                           ${CMAKE_CURRENT_SOURCE_DIR}/ctp/littlefs
 )

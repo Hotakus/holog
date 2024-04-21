@@ -12,33 +12,42 @@
 
 #define HOLOG_BANNER "[Recorded by HoLog]"
 
-#define HOLOG_LINEFEED_CRLF  "\r\n"
-#define HOLOG_LINEFEED_LF    "\n"
+#define HOLOG_LINEFEED_CRLF         "\r\n"
+#define HOLOG_LINEFEED_LF           "\n"
 
 // the size is for log buffer, min is 256
 #define HOLOG_PRINTF_MAX_SIZE       (256)
 
 // enable or disable
 #define HOLOG_STDOUT_ENABLED        (1)
-#define HOLOG_COMMON_FILE_ENABLED   (0)
+#define HOLOG_COMMON_FILE_ENABLED   (1)
 #define HOLOG_FATFS_ENABLED         (0)
 #define HOLOG_LITTLEFS_ENABLED      (0)
 
+// include files
 #if (HOLOG_FATFS_ENABLED == 1)
 #include "ff.h"
 #endif
 #if (HOLOG_LITTLEFS_ENABLED == 1)
-#include "littlefs.h"
+#include "lfs.h"
 #endif
 
-// customize your own timestamp
+// if platform is linux or windows
+#ifdef __linux__
+#define HOLOG_PLATFORM_LINUX
+#endif
+#ifdef _WIN32
+#define HOLOG_PLATFORM_WINDOWS
+#endif
 
-// if platform is arm, use time(NULL)
-#if defined(__arm__) || defined(__aarch64__)
-#define HOLOG_GET_TIMESTAMP()    (0)
-#else
+
+#if defined(HOLOG_PLATFORM_LINUX) || defined(HOLOG_PLATFORM_WINDOWS)
 #define HOLOG_GET_TIMESTAMP()    (time(NULL))
+#else
+#define HOLOG_GET_TIMESTAMP()    (0)            // customize your own timestamp
 #endif
+
+#define HOLOG_AUTO_FILE_CREATE_BY_DATE    (1)
 
 // color
 #define HOLOG_USE_COLOR          (1)
@@ -60,12 +69,12 @@
 #define HOLOG_COLOR_WHITE        "\033[1;37m"
 
 // you can customize color for each part of style
-#define HOLOG_LOG_STYLE_LIST_INFO    {"INFO", HOLOG_COLOR_LIGHT_CYAN}
-#define HOLOG_LOG_STYLE_LIST_ERROR   {"ERROR", HOLOG_COLOR_RED}
-#define HOLOG_LOG_STYLE_LIST_WARNING {"WARNING", HOLOG_COLOR_YELLOW}
-#define HOLOG_LOG_STYLE_LIST_FATAL   {"FATAL", HOLOG_COLOR_LIGHT_RED}
-#define HOLOG_LOG_STYLE_LIST_DEBUG   {"DEBUG", HOLOG_COLOR_DARY_GRAY}
-#define HOLOG_LOG_STYLE_LIST_TRACE   {"TRACE", HOLOG_COLOR_BROWN}
+#define HOLOG_LOG_STYLE_LIST_INFO    {"[INFO] ", HOLOG_COLOR_LIGHT_CYAN}
+#define HOLOG_LOG_STYLE_LIST_ERROR   {"[ERROR]", HOLOG_COLOR_RED}
+#define HOLOG_LOG_STYLE_LIST_WARNING {"[WARN] ", HOLOG_COLOR_YELLOW}
+#define HOLOG_LOG_STYLE_LIST_FATAL   {"[FATAL]", HOLOG_COLOR_LIGHT_RED}
+#define HOLOG_LOG_STYLE_LIST_DEBUG   {"[DEBUG]", HOLOG_COLOR_DARY_GRAY}
+#define HOLOG_LOG_STYLE_LIST_TRACE   {"[TRACE]", HOLOG_COLOR_BROWN}
 
 // holog style
 typedef enum holog_style_define_t {

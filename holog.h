@@ -16,6 +16,7 @@
 #include "homsg_psp.h"
 #include "holog_conf.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,9 +62,13 @@ typedef struct holog_style_t {
 typedef struct holog_msg_t holog_msg_t;
 typedef struct holog_msg_t {
     holog_style_t style;
-    const char *text;
     const char *path;
     const char *linefeed;
+
+#if (HOLOG_LITTLEFS_ENABLED == 1)
+    lfs_t *lfs;
+#endif
+
 } holog_msg_t;
 
 typedef struct holog_device_t holog_device_t;
@@ -73,6 +78,10 @@ typedef struct holog_device_t {
 
     holog_device_type_t type;
     const char *log_path;
+
+#if (HOLOG_LITTLEFS_ENABLED == 1)
+    lfs_t *lfs;
+#endif
 
     uint8_t level;
 } holog_device_t;
