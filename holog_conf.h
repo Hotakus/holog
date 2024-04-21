@@ -70,12 +70,12 @@
 #define HOLOG_COLOR_WHITE        "\033[1;37m"
 
 // you can customize color for each part of style
-#define HOLOG_LOG_STYLE_LIST_INFO    {"[INFO] ", HOLOG_COLOR_LIGHT_CYAN}
-#define HOLOG_LOG_STYLE_LIST_ERROR   {"[ERROR]", HOLOG_COLOR_RED}
-#define HOLOG_LOG_STYLE_LIST_WARNING {"[WARN] ", HOLOG_COLOR_YELLOW}
-#define HOLOG_LOG_STYLE_LIST_FATAL   {"[FATAL]", HOLOG_COLOR_LIGHT_RED}
-#define HOLOG_LOG_STYLE_LIST_DEBUG   {"[DEBUG]", HOLOG_COLOR_DARY_GRAY}
-#define HOLOG_LOG_STYLE_LIST_TRACE   {"[TRACE]", HOLOG_COLOR_BROWN}
+#define HOLOG_LOG_STYLE_LIST_INFO    {"INFO" , HOLOG_COLOR_LIGHT_CYAN}
+#define HOLOG_LOG_STYLE_LIST_ERROR   {"ERROR", HOLOG_COLOR_RED}
+#define HOLOG_LOG_STYLE_LIST_WARNING {"WARN", HOLOG_COLOR_YELLOW}
+#define HOLOG_LOG_STYLE_LIST_FATAL   {"FATAL", HOLOG_COLOR_LIGHT_RED}
+#define HOLOG_LOG_STYLE_LIST_DEBUG   {"DEBUG", HOLOG_COLOR_DARY_GRAY}
+#define HOLOG_LOG_STYLE_LIST_TRACE   {"TRACE", HOLOG_COLOR_BROWN}
 
 // holog style
 typedef enum holog_style_define_t {
@@ -93,12 +93,23 @@ typedef enum holog_style_define_t {
 // customize your own style, the ABCD is the order of style item.
 // the HOLOG_STYLE_MAIN_CONTENT is the main body of log.
 // example: <HOLOG_STYLE_TIME> <HOLOG_STYLE_LEVEL> <HOLOG_STYLE_FILE_NAME> <HOLOG_STYLE_MAIN_CONTENT>
-// out: 16:01:20 [INFO] holog_conf.h:100: your information.
-#define HOLOG_STYLE_A                   (HOLOG_STYLE_TIME)
-#define HOLOG_STYLE_B                   (HOLOG_STYLE_LEVEL)
-#define HOLOG_STYLE_C                   (HOLOG_STYLE_FILE_NAME)
-#define HOLOG_STYLE_D                   (HOLOG_STYLE_MAIN_CONTENT)
+// out: [16:01:20 INFO] holog_conf.h:100: your information.
+//#define HOLOG_STYLE_A                   (HOLOG_STYLE_TIME)
+//#define HOLOG_STYLE_B                   (HOLOG_STYLE_LEVEL)
+//#define HOLOG_STYLE_C                   (HOLOG_STYLE_FILE_NAME)
+//#define HOLOG_STYLE_D                   (HOLOG_STYLE_MAIN_CONTENT)
+
+typedef struct holog_style_list_t {
+    holog_style_define_t style;
+    const char *bracket;
+} holog_style_list_t;
+
+#define HOLOG_STYLE_A                   {HOLOG_STYLE_TIME,          "[/"}
+#define HOLOG_STYLE_B                   {HOLOG_STYLE_LEVEL,         " ]"}
+#define HOLOG_STYLE_C                   {HOLOG_STYLE_FILE_NAME,     "[]"}
+#define HOLOG_STYLE_D                   {HOLOG_STYLE_MAIN_CONTENT,  "  "}
 #define HOLOG_LOG_STYLE_LIST            {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
+
 
 // extra define
 #ifndef __FILE_NAME__
