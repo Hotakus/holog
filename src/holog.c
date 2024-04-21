@@ -253,6 +253,20 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
         return HOLOG_RES_ERROR;
     }
 
+#if (HOLOG_USE_COLOR == 1)
+    uint8_t pos_step = 32;
+#else
+    uint8_t pos_step = 16;
+#endif
+    uint16_t buf_half = (HOLOG_PRINTF_MAX_SIZE >> 1);
+    uint16_t date_pos = buf_half + 0;
+    uint16_t time_pos = buf_half + pos_step * 1;
+    uint16_t path_pos = buf_half + pos_step * 2;
+    uint16_t type_pos = buf_half + pos_step * 3;
+
+    time_t timestamp = HOLOG_GET_TIMESTAMP();
+    struct tm *tm = localtime(&timestamp);
+
     // 通知相应的消息主题
     chain_node_t *subject_node = NULL;
     homsg_subject_t *subject = NULL;
@@ -291,20 +305,6 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
 
                 // 风格化消息
                 const char **style_p = ((const char **)(&dev->style.A));
-#if (HOLOG_USE_COLOR == 1)
-                uint8_t pos_step = 32;
-#else
-                uint8_t pos_step = 16;
-#endif
-                uint16_t buf_half = (HOLOG_PRINTF_MAX_SIZE >> 1);
-                uint16_t date_pos = buf_half + 0;
-                uint16_t time_pos = buf_half + pos_step * 1;
-                uint16_t path_pos = buf_half + pos_step * 2;
-                uint16_t type_pos = buf_half + pos_step * 3;
-
-                time_t timestamp = HOLOG_GET_TIMESTAMP();
-                struct tm *tm = localtime(&timestamp);
-
                 memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
                 for (int j = 0; j < sizeof(style_list) / sizeof(holog_style_list_t); ++j) {
                     switch (style_list[j].style) {
@@ -350,9 +350,12 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             // 格式化可变参数列表
                             va_list args;
                             va_start(args, fmt);
-                            style_buf[0] = ' ';
                             vsnprintf(&style_buf[1], HOLOG_PRINTF_MAX_SIZE / 2, fmt, args);
                             va_end(args);
+
+                            style_buf[0] = style_list[j].bracket[0];
+                            style_buf[strlen(style_buf) - 1] = style_list[j].bracket[1];
+                            style_buf[strlen(style_buf)] = '\0';
                             style_p[j] = &style_buf[0];
                             break;
                         }
@@ -469,7 +472,7 @@ void holog_common_file_callback(void *params) {
     }
 
     fseek(fp, 0, SEEK_END);
-    fprintf(fp, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
+    fprintf(fp, "%s""%s""%s""%s""%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 
     fclose(fp);
 #endif
@@ -493,7 +496,7 @@ void holog_fatfs_callback(void *params) {
     }
 
     f_lseek(&fil, fno.fsize);
-    f_printf(&fil, "%s" " " "%s" " " "%s" " " "%s" " " "%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
+    f_printf(&fil, "%s""%s""%s""%s""%s", msg->style.A, msg->style.B, msg->style.C, msg->style.D, msg->linefeed);
 
     f_close(&fil);
 #endif
