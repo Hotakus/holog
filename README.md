@@ -114,7 +114,7 @@ cd ./bin/ && ./holog
 You will get:  
 <img src="./assets/out1.png" title="" alt="banner" data-align="center">  
 and you will see file: `info.log`, `warning.log`, `error.log`, `all.log` ,  
-The all level logs will broadcast to corresponding devices.
+The all level logs will be broadcast to corresponding devices.
 
 Don't worry about this style, because you can customize it in `holog_conf.h`.
 
@@ -145,19 +145,14 @@ The file path must be directory.
 `holog_conf.h` has many customizable options, you can explore step by step.  
 I will show some options for you.
 
-1️⃣ 
+1️⃣ `HOLOG_GET_TIMESTAMP()`  
+The definition must be set, if you don't use windows or linux, such as ARM platform.  
+It receive a timestamp, such as `1713717037`, it is mean `2024/4/22 00:30:37`
 
+2️⃣ `HOLOG_USE_COLOR`: Default enable  
+3️⃣ `HOLOG_LOG_LEVEL_STYLE`: level tip and level color, such as the error level is red, tip is [E]   
+4️⃣ `HOLOG_LOG_STYLE_LIST` : Per log sentence was split 4 parts, custom each part.
 
-
+Look `holog_conf.h` to learn more.
 
 ---
-
-  a  
-  a  
-  a  
-    a  
-a  
-  aa  
-  a  
-  a  
-  a  
