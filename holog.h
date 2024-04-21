@@ -10,12 +10,10 @@
 #ifndef HOLOG_HOLOG_H
 #define HOLOG_HOLOG_H
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "homsg_psp.h"
 #include "holog_conf.h"
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,21 +23,16 @@ typedef enum holog_res_t {
     HOLOG_RES_ERROR,
     HOLOG_RES_NO_INIT,
     HOLOG_RES_INVALID_PARAMS,
-
-    HOLOG_RES_FILE_OPEN_ERROR,
-    HOLOG_RES_FILE_WRITE_ERROR,
-    HOLOG_RES_FILE_READ_ERROR,
-    HOLOG_RES_FILE_SEEK_ERROR,
 } holog_res_t;
 
 typedef enum holog_level_t {
-    HOLOG_LEVEL_NONE = 0x00,       // (0)  None
-    HOLOG_LEVEL_INFO = 0x01,       // (1)  Info
-    HOLOG_LEVEL_ERROR = 0x02,      // (2)  Error
-    HOLOG_LEVEL_WARNING = 0x04,    // (4)  Warning
-    HOLOG_LEVEL_FATAL = 0x08,      // (5)  Fatal
-    HOLOG_LEVEL_DEBUG = 0x10,      // (16) Debug
-    HOLOG_LEVEL_TRACE = 0x20,      // (32) Trace
+    HOLOG_LEVEL_NONE = 0x00,       // (0)    None
+    HOLOG_LEVEL_INFO = 0x01,       // (1)    Info
+    HOLOG_LEVEL_ERROR = 0x02,      // (2)    Error
+    HOLOG_LEVEL_WARNING = 0x04,    // (4)    Warning
+    HOLOG_LEVEL_FATAL = 0x08,      // (5)    Fatal
+    HOLOG_LEVEL_DEBUG = 0x10,      // (16)   Debug
+    HOLOG_LEVEL_TRACE = 0x20,      // (32)   Trace
     HOLOG_LEVEL_END,               // (0x21) End
 } holog_level_t;
 
@@ -59,18 +52,6 @@ typedef struct holog_style_t {
     const char *D;
 } holog_style_t;
 
-//typedef struct holog_msg_t holog_msg_t;
-//typedef struct holog_msg_t {
-//    holog_style_t style;
-//    const char *path;
-//    const char *linefeed;
-//
-//#if (HOLOG_LITTLEFS_ENABLED == 1)
-//    lfs_t *lfs;
-//#endif
-//
-//} holog_msg_t;
-
 typedef struct holog_device_t holog_device_t;
 typedef struct holog_device_t {
     const char *name;
@@ -81,8 +62,9 @@ typedef struct holog_device_t {
     lfs_t *lfs;
 #endif
 
-    holog_device_type_t type;
     holog_style_t style;
+
+    holog_device_type_t type;
     uint8_t level;
 } holog_device_t;
 

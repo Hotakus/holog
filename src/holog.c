@@ -296,7 +296,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
 #else
                 uint8_t pos_step = 16;
 #endif
-                uint16_t buf_half = (sizeof(style_buf) >> 1);
+                uint16_t buf_half = (HOLOG_PRINTF_MAX_SIZE >> 1);
                 uint16_t date_pos = buf_half + 0;
                 uint16_t time_pos = buf_half + pos_step * 1;
                 uint16_t path_pos = buf_half + pos_step * 2;

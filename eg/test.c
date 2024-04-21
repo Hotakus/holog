@@ -8,7 +8,7 @@
   */
 
 #include <stdio.h>
-#include "holog.h"
+#include "../holog.h"
 
 
 int main() {
