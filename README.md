@@ -11,6 +11,7 @@
 </div>
 
 ---
+
 ### Features：
 - Publish-Subscribe Pattern, support multi-devices(abstract logger object)
 - Highly Customizable, user can customize styles of log easily.
@@ -20,4 +21,7 @@
 
 ---
 
+### Quickly Start：
 
+First, you need pull this repo:  
+`git clone --recurse-submodules git@github.com:Hotakus/holog.git`
