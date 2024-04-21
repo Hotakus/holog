@@ -59,6 +59,46 @@ In the root of HoLog, in shell:
 ---
 
 ### ⌨️ Code Eaxmple
+**1️⃣ Basic usage:**
+```c
+#include "holog.h"
+int main() {
+    // initializing HoLog
+    holog_init();
+    
+    // To use HoLog, you need create log device.
+    // holog()->create() has 4 params,
+    // First param    : unique device name
+    // Second param   : holog_device_type_t, device types
+    // Third param    : holog_level_t, log level, can compose different level
+    // Last param     : linefeed, CRLF or LF, adjust according to your situation
+    // tip: if level was not enable, the device will ignore corresponding level 
+    holog_device_t *stdout_dev = holog()->create("stdout", HOLOG_DEVICE_TYPE_STDOUT, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_CRLF);
+    holog_device_t *info_dev = holog()->create("info_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_INFO, HOLOG_LINEFEED_LF);
+    holog_device_t *warning_dev = holog()->create("warning_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_WARNING, HOLOG_LINEFEED_LF);
+    holog_device_t *error_dev = holog()->create("error_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR, HOLOG_LINEFEED_LF);
+    holog_device_t *mix_dev = holog()->create("mix_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_LF);
+    
+    // if you enable file support in 'holog_conf.h'
+    // you must set the log path(exclude stdout).
+    holog()->set_log_path(stdout_dev, NULL);
+    
+    // Next, you must register device to holog.
+    holog()->register_device(stdout_dev);
+    
+    // Now, you can log out some messages you want.
+    // if you register multi-devices, programe will assign logs automatically to 
+    // corresponding devices you registered
+    holog_info("This is info %d.", 123456);
+    holog_warning("This is warning 0x%x.", 0xdeadbeef);
+    holog_error("This is %s.", "error.");
+    
+    
+    // deinit HoLog
+    holog_deinit();
+    return 0;
+}
+```
 
 
   a  
