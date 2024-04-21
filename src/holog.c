@@ -310,7 +310,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 printf("5\r\n");
 
                 memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
-                printf("6\r\n");
+                printf("6 : %llu\r\n", sizeof(holog_style_list_t));
                 for (int j = 0; j < sizeof(holog_style_list_t); ++j) {
                     switch (style_list[j].style) {
                         case HOLOG_STYLE_TIME : {
