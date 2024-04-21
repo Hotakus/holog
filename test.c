@@ -15,6 +15,8 @@ int main() {
     // HoLog initialize
     holog_init();
 
+    printf("1\r\n");
+
     // you can create log devices very easily, and flexibly
     // Log devices can be set to different log levels very flexibly, if you don't set the log level, it will ignore corresponding level logs.
     // Also support embedded filesystem for embedded system
@@ -23,7 +25,7 @@ int main() {
     holog_device_t *warning_dev = holog()->create("warning_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_WARNING, HOLOG_LINEFEED_LF);
     holog_device_t *error_dev = holog()->create("error_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR, HOLOG_LINEFEED_LF);
     holog_device_t *mix_dev = holog()->create("mix_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ERROR | HOLOG_LEVEL_WARNING | HOLOG_LEVEL_INFO, HOLOG_LINEFEED_LF);
-
+    printf("2\r\n");
     /* FatFs device example */
     // holog_device_t *fatfs_dev = holog()->create("fatfs_dev", HOLOG_DEVICE_TYPE_FATFS, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_LF);
     // holog()->set_log_path(fatfs_dev, "0:/all.log"); /* FatFs device, log info to all.log, the "0:/" is your fatfs mount point */
@@ -42,14 +44,14 @@ int main() {
     holog()->register_device(warning_dev);
     holog()->register_device(error_dev);
     holog()->register_device(mix_dev);
-
+    printf("3\r\n");
     // Print logs
     // Programe will assign logs automatically to corresponding devices you registered
     holog_info("This is info %d.", 114514);
     holog_warning("This is warning.");
     holog_error("This is error.");
-
+    printf("4\r\n");
     holog_deinit();
-
+    printf("5\r\n");
     return 0;
 }
