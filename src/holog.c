@@ -253,6 +253,8 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
         return HOLOG_RES_ERROR;
     }
 
+    printf("4\r\n");
+
     // 通知相应的消息主题
     chain_node_t *subject_node = NULL;
     homsg_subject_t *subject = NULL;
@@ -305,10 +307,14 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                 time_t timestamp = HOLOG_GET_TIMESTAMP();
                 struct tm *tm = localtime(&timestamp);
 
+                printf("5\r\n");
+
                 memset(style_buf, 0, HOLOG_PRINTF_MAX_SIZE);
+                printf("6\r\n");
                 for (int j = 0; j < sizeof(style_list); ++j) {
                     switch (style_list[j].style) {
                         case HOLOG_STYLE_TIME : {
+                            printf("7\r\n");
                             const char *time_fmt = NULL;
                             if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
                                 time_fmt = "%c"HOLOG_COLOR_BLUE"%02d:%02d:%02d"HOLOG_COLOR_NONE"%c";
@@ -321,6 +327,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             break;
                         }
                         case HOLOG_STYLE_DATE : {
+                            printf("8\r\n");
                             const char *date_fmt = NULL;
                             if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
                                 date_fmt = "%c"HOLOG_COLOR_BLUE"%02d-%02d-%02d"HOLOG_COLOR_NONE"%c";
@@ -333,6 +340,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             break;
                         }
                         case HOLOG_STYLE_LEVEL : {
+                            printf("9\r\n");
                             const char *level_fmt = NULL;
                             if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
                                 level_fmt = "%c""%s""%s"HOLOG_COLOR_NONE"%c";
@@ -347,6 +355,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             break;
                         }
                         case HOLOG_STYLE_MAIN_CONTENT : {
+                            printf("10\r\n");
                             // 格式化可变参数列表
                             va_list args;
                             va_start(args, fmt);
@@ -357,6 +366,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                             break;
                         }
                         case HOLOG_STYLE_FILE_NAME : {
+                            printf("11\r\n");
                             const char *file_fmt = NULL;
                             if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
                                 file_fmt = "%c"HOLOG_COLOR_DARY_GRAY"%s:%d"HOLOG_COLOR_NONE"%c";
@@ -386,7 +396,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
                         }
                     }
                 }
-
+                printf("12\r\n");
                 homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
                 update((void *)dev);    // Run callback
                 subscriber = subscriber->next_node;

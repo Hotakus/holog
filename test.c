@@ -50,8 +50,7 @@ int main() {
     holog_info("This is info %d.", 114514);
     holog_warning("This is warning.");
     holog_error("This is error.");
-    printf("4\r\n");
+
     holog_deinit();
-    printf("5\r\n");
     return 0;
 }
