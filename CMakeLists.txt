@@ -21,11 +21,22 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -Wall")
 
 # main add
 add_definitions(-DDUMMY_DEFINE)
-
 add_subdirectory(./src/homsg_psp)
 
-#add_executable(holog ./src/holog.c test.c)
-add_library(holog STATIC ./src/holog.c)
+if (HOLOG_USE_BUILTIN_FATFS)
+    add_subdirectory(./ctp/fatfs)
+endif ()
+
+if (HOLOG_USE_BUILTIN_LITTLEFS)
+    add_subdirectory(./ctp/littlefs)
+endif ()
+
+if (HOLOG_USE_TEST)
+    add_executable(holog ./src/holog.c test.c)
+else ()
+    add_library(holog STATIC ./src/holog.c)
+endif ()
+
 target_link_libraries(holog homsg_psp)
 target_include_directories(holog PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}
@@ -36,3 +47,11 @@ target_include_directories(holog PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/ctp/fatfs/inc
                            ${CMAKE_CURRENT_SOURCE_DIR}/ctp/littlefs
 )
+
+if (HOLOG_USE_BUILTIN_FATFS)
+    target_link_libraries(holog fatfs)
+endif ()
+
+if (HOLOG_USE_BUILTIN_FATFS)
+    target_link_libraries(holog lfs)
+endif ()
