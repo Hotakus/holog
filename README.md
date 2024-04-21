@@ -82,9 +82,17 @@ int main() {
     // if you enable file support in 'holog_conf.h'
     // you must set the log path(exclude stdout).
     holog()->set_log_path(stdout_dev, NULL);
+    holog()->set_log_path(info_dev, "./info.log");
+    holog()->set_log_path(warning_dev, "./warning.log");
+    holog()->set_log_path(error_dev, "./error.log");
+    holog()->set_log_path(mix_dev, "./all.log");
     
     // Next, you must register device to holog.
     holog()->register_device(stdout_dev);
+    holog()->register_device(info_dev);
+    holog()->register_device(warning_dev);
+    holog()->register_device(error_dev);
+    holog()->register_device(mix_dev);
     
     // Now, you can log out some messages you want.
     // if you register multi-devices, programe will assign logs automatically to 
@@ -93,13 +101,56 @@ int main() {
     holog_warning("This is warning 0x%x.", 0xdeadbeef);
     holog_error("This is %s.", "error.");
     
-    
     // deinit HoLog
     holog_deinit();
     return 0;
 }
 ```
+**Run:**
+```shell
+./build.sh -DHOLOG_USE_TEST
+cd ./bin/ && ./holog
+```
+You will get:  
+<img src="./assets/out1.png" title="" alt="banner" data-align="center">  
+and you will see file: `info.log`, `warning.log`, `error.log`, `all.log` ,  
+The all level logs will broadcast to corresponding devices.
 
+Don't worry about this style, because you can customize it in `holog_conf.h`.
+
+**2️⃣ FatFs usage:**
+```c
+#include "holog.h"
+int main() {
+    holog_init();
+    
+    holog_device_t *fatfs_dev = holog()->create("fatfs_dev", HOLOG_DEVICE_TYPE_FATFS, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_LF);
+    holog()->set_log_path(fatfs_dev, "0:/all.log"); /* FatFs device, log info to all.log, the "0:/" is your fatfs mount point */
+    holog()->register_device(fatfs_dev);
+    holog_info("Log to FatFs.");
+    
+    holog_deinit();
+    return 0;
+}
+```
+
+**3️⃣ Auto file name by date:**  
+In `holog_conf.h`, enable the definition `HOLOG_AUTO_FILE_CREATE_BY_DATE`  
+Now, the `holog()->set_log_path(your_dev, "0:/all.log")` must be changed to `holog()->set_log_path(fatfs_dev, "0:/")`   
+The file path must be directory.
+
+---
+
+### 🛠️ Configuring 'holog_conf.h' 
+`holog_conf.h` has many customizable options, you can explore step by step.  
+I will show some options for you.
+
+1️⃣ 
+
+
+
+
+---
 
   a  
   a  

@@ -29,7 +29,7 @@ int main() {
 //    // holog()->register_device(fatfs_dev);
 //
 //    // Set log path
-//    holog()->set_log_path(stdout_dev, NULL);    // stdout don't need log path, set to NULL
+    //holog()->set_log_path(stdout_dev, NULL);    // stdout don't need log path, set to NULL
 //    holog()->set_log_path(info_dev, "./info.log");
 //    holog()->set_log_path(warning_dev, "./warning.log");
 //    holog()->set_log_path(error_dev, "./error.log");
