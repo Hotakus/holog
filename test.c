@@ -12,10 +12,6 @@
 
 
 int main() {
-
-    printf("Hello World! %llu\n", sizeof(HOLOG_PROJECT_ROOT_DIR));
-    printf("Hello World! %s\n", &__FILE__[sizeof(HOLOG_PROJECT_ROOT_DIR)]);
-
     // HoLog initialize
     holog_init();
 

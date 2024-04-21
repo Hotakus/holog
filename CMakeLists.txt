@@ -35,5 +35,3 @@ target_include_directories(holog PUBLIC
 
                            ${CMAKE_CURRENT_SOURCE_DIR}/ctp/littlefs
 )
-# 将项目根目录路径定义为宏
-target_compile_definitions(holog PUBLIC HOLOG_PROJECT_ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
