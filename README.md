@@ -1,3 +1,1 @@
-<div>
-<h1 align="center">HoLog</h1>
-</div>
+<img src="./assets/holog_banner.png" title="" alt="banner" data-align="center">
