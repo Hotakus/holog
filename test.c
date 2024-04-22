@@ -70,9 +70,9 @@ int main() {
     holog()->register_device(stdout_dev);
     holog()->register_device(file_dev);
 
-    holog_info("This is info %d.", 114514);
-    holog_warning("This is warning 0x%x.", 0xdeadbeef);
-    holog_error("This is %s.", "error.");
+    holog_info("This is info %d. sdfs xxx", 114514);
+    holog_warning("This is warning 0x%x.  s的ddddfad xxx", 0xdeadbeef);
+    holog_error("This is %s.", "error.fass xxx");
 
     holog_deinit();
     return 0;

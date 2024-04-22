@@ -97,14 +97,16 @@ typedef enum holog_style_define_t {
 // example: <HOLOG_STYLE_TIME> <HOLOG_STYLE_LEVEL> <HOLOG_STYLE_FILE_NAME> <HOLOG_STYLE_MAIN_CONTENT>
 // out: [16:01:20 INFO] holog_conf.h:100: your information.
 #include "./inc/holog_style_list.h"
-#define HOLOG_STYLE_A                   {HOLOG_STYLE_TIME,          "[]"}
-#define HOLOG_STYLE_B                   {HOLOG_STYLE_LEVEL,         "[]"}
-#define HOLOG_STYLE_C                   {HOLOG_STYLE_FILE_NAME,     "[]"}
-#define HOLOG_STYLE_D                   {HOLOG_STYLE_MAIN_CONTENT,  "  "}
-#define HOLOG_STYLE_DEFAULT             {HOLOG_STYLE_A, HOLOG_STYLE_B, HOLOG_STYLE_C, HOLOG_STYLE_D}
+#define HOLOG_DEFAULT_STYLE_A          {HOLOG_STYLE_TIME,          "[]"}
+#define HOLOG_DEFAULT_STYLE_B          {HOLOG_STYLE_LEVEL,         "[]"}
+#define HOLOG_DEFAULT_STYLE_C          {HOLOG_STYLE_FILE_NAME,     " :"}
+#define HOLOG_DEFAULT_STYLE_D          {HOLOG_STYLE_MAIN_CONTENT,  "  "}
+#define HOLOG_STYLE_DEFAULT            {HOLOG_DEFAULT_STYLE_A, HOLOG_DEFAULT_STYLE_B, \
+                                        HOLOG_DEFAULT_STYLE_C, HOLOG_DEFAULT_STYLE_D}
+
 
 // customize your own log style, or use ./inc/holog_style_list.h
-#define HOLOG_LOG_STYLE_LIST            HOLOG_CUSTOM_STYLE_1
+#define HOLOG_LOG_STYLE_LIST            HOLOG_STYLE_DEFAULT
 
 // extra define
 #ifndef __FILE_NAME__
