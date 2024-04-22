@@ -122,6 +122,9 @@ Don't worry about this style, because you can customize it in `holog_conf.h`.
 ```c
 #include "holog.h"
 int main() {
+    // init your FatFs
+    your_fatfs_init();
+    
     holog_init();
     
     holog_device_t *fatfs_dev = holog()->create("fatfs_dev", HOLOG_DEVICE_TYPE_FATFS, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_LF);
