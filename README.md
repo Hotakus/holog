@@ -148,14 +148,14 @@ The file path must be directory.
 `holog_conf.h` has many customizable options, you can explore step by step.  
 I will show some options for you.
 
-1️⃣ `HOLOG_GET_TIMESTAMP()`  
+1️⃣: `HOLOG_GET_TIMESTAMP()`  
 The definition must be set, if you don't use windows or linux, such as ARM platform.  
 It receive a timestamp, such as `1713717037`, it is mean `2024/4/22 00:30:37`
 
-2️⃣ `HOLOG_USE_COLOR`: Default enable  
-3️⃣ `HOLOG_LOG_LEVEL_STYLE`: level tip and level color, such as the error level is red, tip is [E]   
-4️⃣ `HOLOG_LOG_STYLE_LIST` : Per log sentence was split 4 parts, custom each part.
+2️⃣: `HOLOG_USE_COLOR`: Default enable  
+3️⃣: `HOLOG_LOG_LEVEL_STYLE`: level tip and level color, such as the error level is red, tip is [E]   
+4️⃣: `HOLOG_LOG_STYLE_LIST` : Per log sentence was split 4 parts, custom each part.
 
-Look `holog_conf.h` to learn more.
+**Look `holog_conf.h` to learn more.**
 
 ---
