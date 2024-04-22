@@ -104,7 +104,6 @@ typedef enum holog_style_define_t {
 #define HOLOG_STYLE_DEFAULT            {HOLOG_DEFAULT_STYLE_A, HOLOG_DEFAULT_STYLE_B, \
                                         HOLOG_DEFAULT_STYLE_C, HOLOG_DEFAULT_STYLE_D}
 
-
 // customize your own log style, or use ./inc/holog_style_list.h
 #define HOLOG_LOG_STYLE_LIST            HOLOG_STYLE_DEFAULT
 
