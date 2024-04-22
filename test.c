@@ -53,8 +53,6 @@ int main() {
 //
 //    holog_deinit();
 
-
-
     holog_init();
     holog_device_t *stdout_dev = holog()->create("stdout", HOLOG_DEVICE_TYPE_STDOUT, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_CRLF);
     holog_device_t *file_dev = holog()->create("file_dev", HOLOG_DEVICE_TYPE_COMMON_FILE, HOLOG_LEVEL_ALL, HOLOG_LINEFEED_LF);

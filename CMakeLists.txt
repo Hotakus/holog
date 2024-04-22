@@ -31,12 +31,13 @@ if (HOLOG_USE_BUILTIN_LITTLEFS)
     add_subdirectory(./ctp/littlefs)
 endif ()
 
-#if (HOLOG_USE_TEST)
-#    add_executable(holog ./src/holog.c test.c)
-#else ()
-#    add_library(holog STATIC ./src/holog.c)
-#endif ()
-add_executable(holog ./src/holog.c test.c)
+if (HOLOG_USE_TEST)
+    add_executable(holog ./src/holog.c test.c)
+else ()
+    add_library(holog STATIC ./src/holog.c)
+endif ()
+#add_executable(holog ./src/holog.c test.c)
+
 target_link_libraries(holog homsg_psp)
 target_include_directories(holog PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}
