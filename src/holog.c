@@ -243,147 +243,148 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
     chain_node_t *subject_node = NULL;
     homsg_subject_t *subject = NULL;
     for (int i = 1, k = 0; i < HOLOG_LEVEL_END; i = i << 1, k++) {
-        if (i == level) {
-            subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_level_list[k].level, true);
-            if (subject_node == NULL) {
-                HOLOG_FREE(style_buf);
-                return HOLOG_RES_ERROR;
-            }
-
-            subject = (homsg_subject_t *)subject_node->data;
-            if (subject == NULL) {
-                HOLOG_FREE(style_buf);
-                return HOLOG_RES_ERROR;
-            }
-
-            // 遍历所有订阅者
-            chain_node_t *subscriber = subject->subscribers->head->next_node;
-            if (subscriber == subject->subscribers->tail) {
-                HOLOG_FREE(style_buf);
-                return HOLOG_RES_ERROR;
-            }
-            while (subscriber != subject->subscribers->tail) {
-                chain_node_t *registered_subscriber = chain_find_node_by_name(instance.devices, subscriber->name, true);
-                if (registered_subscriber == NULL) {
-                    HOLOG_FREE(style_buf);
-                    return HOLOG_RES_ERROR;
-                }
-
-                holog_device_t *dev = (holog_device_t *)registered_subscriber->data;
-                if (dev == NULL) {
-                    HOLOG_FREE(style_buf);
-                    return HOLOG_RES_ERROR;
-                }
+        if (i != level) {
+            continue;
+        }
 
 #if (HOLOG_USE_COLOR == 1)
-                uint8_t pos_step = 32;
+        uint8_t pos_step = 32;
 #else
-                uint8_t pos_step = 16;
+        uint8_t pos_step = 16;
 #endif
-                uint16_t style_pos = (HOLOG_PRINTF_MAX_SIZE - 128);
-                uint16_t date_pos = style_pos + 0;
-                uint16_t time_pos = style_pos + pos_step * 1;
-                uint16_t path_pos = style_pos + pos_step * 2;
-                uint16_t type_pos = style_pos + pos_step * 3;
+        uint16_t style_pos = (HOLOG_PRINTF_MAX_SIZE - 128);
+        uint16_t date_pos = style_pos + 0;
+        uint16_t time_pos = style_pos + pos_step * 1;
+        uint16_t path_pos = style_pos + pos_step * 2;
+        uint16_t type_pos = style_pos + pos_step * 3;
 
-                time_t timestamp = HOLOG_GET_TIMESTAMP();
-                struct tm *tm = localtime(&timestamp);
+        time_t timestamp = HOLOG_GET_TIMESTAMP();
+        struct tm *tm = localtime(&timestamp);
 
-                // 风格化消息
-                const char **style_p = ((const char **)(&dev->style.A));
-                memset(style_buf, '\0', HOLOG_PRINTF_MAX_SIZE);
-                for (int j = 0; j < sizeof(style_list) / sizeof(holog_style_list_t); ++j) {
-                    switch (style_list[j].style) {
-                        case HOLOG_STYLE_TIME : {
-                            const char *time_fmt = NULL;
-                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
-                                time_fmt = "%c"HOLOG_COLOR_BLUE"%02d:%02d:%02d"HOLOG_COLOR_NONE"%c";
-                            } else {
-                                time_fmt = "%c""%02d:%02d:%02d""%c";
-                            }
-                            sprintf(&style_buf[time_pos], time_fmt, style_list[j].bracket[0],
-                                    tm->tm_hour, tm->tm_min, tm->tm_sec, style_list[j].bracket[1]);
-                            style_p[j] = &style_buf[time_pos];
-                            break;
-                        }
-                        case HOLOG_STYLE_DATE : {
-                            const char *date_fmt = NULL;
-                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
-                                date_fmt = "%c"HOLOG_COLOR_BLUE"%02d-%02d-%02d"HOLOG_COLOR_NONE"%c";
-                            } else {
-                                date_fmt = "%c""%02d-%02d-%02d""%c";
-                            }
-                            sprintf(&style_buf[date_pos], date_fmt, style_list[j].bracket[0],
-                                    tm->tm_year - 100, tm->tm_mon + 1, tm->tm_mday, style_list[j].bracket[1]);
-                            style_p[j] = &style_buf[date_pos];
-                            break;
-                        }
-                        case HOLOG_STYLE_LEVEL : {
-                            const char *level_fmt = NULL;
-                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
-                                level_fmt = "%c""%s""%s"HOLOG_COLOR_NONE"%c";
-                                sprintf(&style_buf[type_pos], level_fmt, style_list[j].bracket[0],
-                                        log_level_list[k].color, log_level_list[k].level, style_list[j].bracket[1]);
-                            } else {
-                                level_fmt = "%c""%s""%c";
-                                sprintf(&style_buf[type_pos], level_fmt, style_list[j].bracket[0],
-                                        log_level_list[k].level, style_list[j].bracket[1]);
-                            }
-                            style_p[j] = &style_buf[type_pos];
-                            break;
-                        }
-                        case HOLOG_STYLE_MAIN_CONTENT : {
-                            // 格式化可变参数列表
-                            va_list args;
-                            va_start(args, fmt);
-                            vsnprintf(&style_buf[1], style_pos, fmt, args);
-                            va_end(args);
+        subject_node = chain_find_node_by_name(instance.psp->all_subjects, log_level_list[k].level, true);
+        if (subject_node == NULL) {
+            HOLOG_FREE(style_buf);
+            return HOLOG_RES_ERROR;
+        }
 
-                            style_buf[0] = style_list[j].bracket[0];
-                            style_buf[strlen(style_buf)] = style_list[j].bracket[1];
-//                            style_buf[strlen(style_buf) + 1] = '\0';
+        subject = (homsg_subject_t *)subject_node->data;
+        if (subject == NULL) {
+            HOLOG_FREE(style_buf);
+            return HOLOG_RES_ERROR;
+        }
 
-                            style_p[j] = &style_buf[0];
-                            break;
+        // notify all subscribers in corresponding level subject
+        chain_node_t *subscriber = subject->subscribers->head->next_node;
+        if (subscriber == subject->subscribers->tail) {
+            HOLOG_FREE(style_buf);
+            return HOLOG_RES_ERROR;
+        }
+        while (subscriber != subject->subscribers->tail) {
+            chain_node_t *registered_subscriber = chain_find_node_by_name(instance.devices, subscriber->name, true);
+            if (registered_subscriber == NULL) {
+                HOLOG_FREE(style_buf);
+                return HOLOG_RES_ERROR;
+            }
+
+            holog_device_t *dev = (holog_device_t *)registered_subscriber->data;
+            if (dev == NULL) {
+                HOLOG_FREE(style_buf);
+                return HOLOG_RES_ERROR;
+            }
+
+            // 风格化消息
+            const char **style_p = ((const char **)(&dev->style.A));
+            memset(style_buf, '\0', HOLOG_PRINTF_MAX_SIZE);
+            for (int j = 0; j < sizeof(style_list) / sizeof(holog_style_list_t); ++j) {
+                switch (style_list[j].style) {
+                    case HOLOG_STYLE_TIME : {
+                        const char *time_fmt = NULL;
+                        if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                            time_fmt = "%c"HOLOG_COLOR_BLUE"%02d:%02d:%02d"HOLOG_COLOR_NONE"%c";
+                        } else {
+                            time_fmt = "%c""%02d:%02d:%02d""%c";
                         }
-                        case HOLOG_STYLE_FILE_NAME : {
-                            const char *file_fmt = NULL;
-                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
-                                file_fmt = "%c"HOLOG_COLOR_DARY_GRAY"%s:%d"HOLOG_COLOR_NONE"%c";
-                            } else {
-                                file_fmt = "%c""%s:%d""%c";
-                            }
-                            sprintf(&style_buf[path_pos], file_fmt, style_list[j].bracket[0],
-                                    file_name, line, style_list[j].bracket[1]);
-                            style_p[j] = &style_buf[path_pos];
-                            break;
+                        sprintf(&style_buf[time_pos], time_fmt, style_list[j].bracket[0],
+                                tm->tm_hour, tm->tm_min, tm->tm_sec, style_list[j].bracket[1]);
+                        style_p[j] = &style_buf[time_pos];
+                        break;
+                    }
+                    case HOLOG_STYLE_DATE : {
+                        const char *date_fmt = NULL;
+                        if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                            date_fmt = "%c"HOLOG_COLOR_BLUE"%02d-%02d-%02d"HOLOG_COLOR_NONE"%c";
+                        } else {
+                            date_fmt = "%c""%02d-%02d-%02d""%c";
                         }
-                        case HOLOG_STYLE_FILE_PATH : {
-                            if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
-                                sprintf(&style_buf[path_pos], HOLOG_COLOR_DARY_GRAY"%s:%d"HOLOG_COLOR_NONE, file_path, line);
-                            } else {
-                                sprintf(&style_buf[path_pos], "%s:%d", file_path, line);
-                            }
-                            style_p[j] = &style_buf[path_pos];
-                            break;
+                        sprintf(&style_buf[date_pos], date_fmt, style_list[j].bracket[0],
+                                tm->tm_year - 100, tm->tm_mon + 1, tm->tm_mday, style_list[j].bracket[1]);
+                        style_p[j] = &style_buf[date_pos];
+                        break;
+                    }
+                    case HOLOG_STYLE_LEVEL : {
+                        const char *level_fmt = NULL;
+                        if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                            level_fmt = "%c""%s""%s"HOLOG_COLOR_NONE"%c";
+                            sprintf(&style_buf[type_pos], level_fmt, style_list[j].bracket[0],
+                                    log_level_list[k].color, log_level_list[k].level, style_list[j].bracket[1]);
+                        } else {
+                            level_fmt = "%c""%s""%c";
+                            sprintf(&style_buf[type_pos], level_fmt, style_list[j].bracket[0],
+                                    log_level_list[k].level, style_list[j].bracket[1]);
                         }
-                        case HOLOG_STYLE_FILE_RELATIVE_PATH: {
-                            // todo)):
-                            style_p[j] = style_p[j];
-                            break;
+                        style_p[j] = &style_buf[type_pos];
+                        break;
+                    }
+                    case HOLOG_STYLE_MAIN_CONTENT : {
+                        // 格式化可变参数列表
+                        va_list args;
+                        va_start(args, fmt);
+                        vsnprintf(&style_buf[1], style_pos, fmt, args);
+                        va_end(args);
+
+                        style_buf[0] = style_list[j].bracket[0];
+                        style_buf[strlen(style_buf)] = style_list[j].bracket[1];
+
+                        style_p[j] = &style_buf[0];
+                        break;
+                    }
+                    case HOLOG_STYLE_FILE_NAME : {
+                        const char *file_fmt = NULL;
+                        if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                            file_fmt = "%c"HOLOG_COLOR_DARY_GRAY"%s:%d"HOLOG_COLOR_NONE"%c";
+                        } else {
+                            file_fmt = "%c""%s:%d""%c";
                         }
-                        default: {
-                            break;
+                        sprintf(&style_buf[path_pos], file_fmt, style_list[j].bracket[0],
+                                file_name, line, style_list[j].bracket[1]);
+                        style_p[j] = &style_buf[path_pos];
+                        break;
+                    }
+                    case HOLOG_STYLE_FILE_PATH : {
+                        if (dev->type == HOLOG_DEVICE_TYPE_STDOUT && HOLOG_USE_COLOR) {
+                            sprintf(&style_buf[path_pos], HOLOG_COLOR_DARY_GRAY"%s:%d"HOLOG_COLOR_NONE, file_path, line);
+                        } else {
+                            sprintf(&style_buf[path_pos], "%s:%d", file_path, line);
                         }
+                        style_p[j] = &style_buf[path_pos];
+                        break;
+                    }
+                    case HOLOG_STYLE_FILE_RELATIVE_PATH: {
+                        // todo)):
+                        style_p[j] = style_p[j];
+                        break;
+                    }
+                    default: {
+                        break;
                     }
                 }
-
-                homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
-                update((void *)dev);    // Run callback
-                subscriber = subscriber->next_node;
             }
-            break;
+
+            homsg_subscriber_update_callback_t update = (homsg_subscriber_update_callback_t)subscriber->data;
+            update((void *)dev);    // Run callback
+            subscriber = subscriber->next_node;
         }
+        break;
     }
 
     HOLOG_FREE(style_buf);
