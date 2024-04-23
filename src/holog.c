@@ -277,7 +277,7 @@ holog_res_t holog_printf(holog_level_t level, char *file_path, char *file_name, 
         chain_node_t *subscriber = subject->subscribers->head->next_node;
         if (subscriber == subject->subscribers->tail) {
             HOLOG_FREE(style_buf);
-            return HOLOG_RES_ERROR;
+            return HOLOG_RES_NO_DEVICE;
         }
         while (subscriber != subject->subscribers->tail) {
             chain_node_t *registered_subscriber = chain_find_node_by_name(instance.devices, subscriber->name, true);

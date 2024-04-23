@@ -23,6 +23,8 @@ typedef enum holog_res_t {
     HOLOG_RES_ERROR,
     HOLOG_RES_NO_INIT,
     HOLOG_RES_INVALID_PARAMS,
+
+    HOLOG_RES_NO_DEVICE,
 } holog_res_t;
 
 typedef enum holog_level_t {
