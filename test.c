@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "holog.h"
 
+#ifdef HOLOG_USE_TEST
 int main() {
 //    // HoLog initialize
 //    holog_init();
@@ -75,3 +76,4 @@ int main() {
     holog_deinit();
     return 0;
 }
+#endif
